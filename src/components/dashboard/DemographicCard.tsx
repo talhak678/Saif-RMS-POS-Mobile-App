@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function DemographicCard({ stats }: any) {
@@ -19,15 +20,14 @@ export default function DemographicCard({ stats }: any) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.card,
     borderRadius: 16,
-    padding: 16,
-    // marginTop: 16,
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 12,
+    color: Colors.light.text,
   },
   row: {
     flexDirection: "row",
@@ -36,9 +36,11 @@ const styles = StyleSheet.create({
   },
   country: {
     fontWeight: "600",
+    color: Colors.light.text,
   },
   count: {
-    color: "#2563EB",
+    color: Colors.primary,
     fontWeight: "700",
   },
 });
+

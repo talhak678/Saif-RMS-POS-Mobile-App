@@ -1,17 +1,18 @@
+import { Colors } from "@/constants/theme";
 import apiClient from "@/src/api/apiClient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface Role {
@@ -95,8 +96,6 @@ export default function AddUserScreen() {
   };
 
   const handleSubmit = async () => {
-    console.log("hfjhsdjkfb");
-    
     if (!form.name || !form.email || !form.phone || !form.password || !form.confirmPassword || !form.roleId) {
       Alert.alert("Validation Error", "Please fill all required fields");
       return;
@@ -120,7 +119,6 @@ export default function AddUserScreen() {
     setSaving(true);
 
     try {
-      // Step 1: Create user
       const payload: any = {
         name: form.name,
         email: form.email,
@@ -135,7 +133,6 @@ export default function AddUserScreen() {
 
       if (!userId) throw new Error("Failed to get created user ID");
 
-      // Step 2: Assign role
       await apiClient.post("/user-roles", {
         userId,
         roleId: form.roleId,
@@ -154,7 +151,7 @@ export default function AddUserScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#0284C7" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
@@ -164,7 +161,7 @@ export default function AddUserScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={22} color="#0284C7" />
+          <Ionicons name="arrow-back" size={22} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Add User</Text>
         <View style={{ width: 32 }} />
@@ -173,9 +170,9 @@ export default function AddUserScreen() {
       {/* Form Card */}
       <View style={styles.card}>
         <Text style={styles.section}>Basic Information</Text>
-        <Input label="Name *" value={form.name} onChangeText={(v:any) => handleInput("name", v)} />
-        <Input label="Email *" value={form.email} keyboardType="email-address" onChangeText={(v:any) => handleInput("email", v)} />
-        <Input label="Phone *" value={form.phone} onChangeText={(v:any) => handleInput("phone", v)} />
+        <Input label="Name *" value={form.name} onChangeText={(v: any) => handleInput("name", v)} />
+        <Input label="Email *" value={form.email} keyboardType="email-address" onChangeText={(v: any) => handleInput("email", v)} />
+        <Input label="Phone *" value={form.phone} onChangeText={(v: any) => handleInput("phone", v)} />
 
         {showWorkspaces && (
           <>
@@ -189,7 +186,7 @@ export default function AddUserScreen() {
                   fetchRoles(w.Id);
                 }}
               >
-                <Text>{w.Name}</Text>
+                <Text style={{ color: Colors.light.text }}>{w.Name}</Text>
               </TouchableOpacity>
             ))}
           </>
@@ -202,17 +199,23 @@ export default function AddUserScreen() {
             style={[styles.roleItem, form.roleId === r.Id && styles.roleActive]}
             onPress={() => handleInput("roleId", r.Id)}
           >
-            <Text>{r.Name}</Text>
+            <Text style={{ color: Colors.light.text }}>{r.Name}</Text>
           </TouchableOpacity>
         ))}
 
         <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 12 }}>
-          <Text>Show Password</Text>
-          <Switch value={showPassword} onValueChange={setShowPassword} style={{ marginLeft: 12 }} />
+          <Text style={{ color: Colors.light.text }}>Show Password</Text>
+          <Switch
+            value={showPassword}
+            onValueChange={setShowPassword}
+            style={{ marginLeft: 12 }}
+            trackColor={{ false: "#CBD5E1", true: Colors.primary + "80" }}
+            thumbColor={showPassword ? Colors.primary : "#F1F5F9"}
+          />
         </View>
 
-        <Input label="Password *" secure={!showPassword} value={form.password} onChangeText={(v:any) => handleInput("password", v)} />
-        <Input label="Confirm Password *" secure={!showPassword} value={form.confirmPassword} onChangeText={(v:any) => handleInput("confirmPassword", v)} />
+        <Input label="Password *" secureTextEntry={!showPassword} value={form.password} onChangeText={(v: any) => handleInput("password", v)} />
+        <Input label="Confirm Password *" secureTextEntry={!showPassword} value={form.confirmPassword} onChangeText={(v: any) => handleInput("confirmPassword", v)} />
 
         <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit} disabled={saving}>
           {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveText}>Save User</Text>}
@@ -225,23 +228,28 @@ export default function AddUserScreen() {
 /* 🔹 UI Helpers */
 const Input = ({ label, style, ...props }: any) => (
   <View style={{ marginBottom: 12 }}>
-    <Text style={{ fontSize: 12, fontWeight: "600", color: "#475569", marginBottom: 4 }}>{label}</Text>
-    <TextInput style={[styles.input, style]} placeholderTextColor="#94A3B8" {...props} />
+    <Text style={{ fontSize: 12, fontWeight: "600", color: Colors.light.secondary, marginBottom: 4 }}>{label}</Text>
+    <TextInput
+      style={[styles.input, style]}
+      placeholderTextColor={Colors.light.secondary}
+      {...props}
+    />
   </View>
 );
 
 /* 🎨 Styles */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F0F9FF", padding: 16 },
+  container: { flex: 1, backgroundColor: Colors.light.background, padding: 16 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 18 },
-  backBtn: { backgroundColor: "#E0F2FE", padding: 8, borderRadius: 12 },
-  headerTitle: { fontSize: 20, fontWeight: "700", color: "#0F172A" },
-  card: { backgroundColor: "#FFFFFF", borderRadius: 18, padding: 16, marginBottom: 20, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 10, elevation: 3 },
-  section: { fontSize: 14, fontWeight: "700", color: "#0284C7", marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E2E8F0", borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 14, color: "#0F172A" },
-  saveBtn: { backgroundColor: "#0284C7", paddingVertical: 16, borderRadius: 16, alignItems: "center", shadowColor: "#0284C7", shadowOpacity: 0.25, shadowRadius: 10, elevation: 4, zIndex: 10, position: "relative" },
+  backBtn: { backgroundColor: Colors.primary + "15", padding: 8, borderRadius: 12 },
+  headerTitle: { fontSize: 20, fontWeight: "700", color: Colors.light.text },
+  card: { backgroundColor: Colors.light.card, borderRadius: 18, padding: 16, marginBottom: 20, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 10, elevation: 3 },
+  section: { fontSize: 14, fontWeight: "700", color: Colors.primary, marginTop: 12, marginBottom: 6 },
+  input: { backgroundColor: Colors.light.card, borderWidth: 1, borderColor: Colors.light.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 14, color: Colors.light.text },
+  saveBtn: { backgroundColor: Colors.primary, paddingVertical: 16, borderRadius: 16, alignItems: "center" },
   saveText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
-  roleItem: { padding: 12, backgroundColor: "#fff", marginBottom: 6, borderRadius: 8 },
-  roleActive: { borderWidth: 1, borderColor: "#0284C7" },
+  roleItem: { padding: 12, backgroundColor: Colors.light.background, marginBottom: 6, borderRadius: 8 },
+  roleActive: { borderWidth: 1, borderColor: Colors.primary },
 });
+

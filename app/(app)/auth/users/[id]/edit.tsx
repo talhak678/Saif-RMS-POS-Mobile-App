@@ -1,15 +1,17 @@
+import { Colors } from "@/constants/theme";
 import apiClient from "@/src/api/apiClient";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface Role {
@@ -132,7 +134,6 @@ export default function EditUserScreen() {
     setSaving(true);
 
     try {
-      // Merge original user data with edited fields
       const payload = {
         ...originalUser,
         id: form.id,
@@ -144,7 +145,6 @@ export default function EditUserScreen() {
 
       await apiClient.put(`/users/${id}`, payload);
 
-      // Update role if changed
       if (form.roleId !== currentRoleId) {
         await apiClient.put(`/user-roles/${id}?roleid=${form.roleId}`, {});
       }
@@ -157,11 +157,10 @@ export default function EditUserScreen() {
     }
   };
 
-  /* ---------------- UI ---------------- */
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#0284C7" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
@@ -170,8 +169,8 @@ export default function EditUserScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.back}>Back</Text>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={22} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.title}>Edit User</Text>
       </View>
@@ -179,9 +178,9 @@ export default function EditUserScreen() {
       <ScrollView contentContainerStyle={styles.form}>
         {error && <Text style={styles.error}>{error}</Text>}
 
-        <Input label="Name" value={form.name} onChange={(v:any) => setForm({ ...form, name: v })} />
-        <Input label="Email" value={form.email} onChange={(v:any) => setForm({ ...form, email: v })} />
-        <Input label="Phone" value={form.phone} onChange={(v:any) => setForm({ ...form, phone: v })} />
+        <Input label="Name" value={form.name} onChange={(v: any) => setForm({ ...form, name: v })} />
+        <Input label="Email" value={form.email} onChange={(v: any) => setForm({ ...form, email: v })} />
+        <Input label="Phone" value={form.phone} onChange={(v: any) => setForm({ ...form, phone: v })} />
 
         <Text style={styles.label}>Role</Text>
         {roles.map((r) => (
@@ -193,20 +192,25 @@ export default function EditUserScreen() {
             ]}
             onPress={() => setForm({ ...form, roleId: r.Id })}
           >
-            <Text>{r.Name}</Text>
+            <Text style={{ color: Colors.light.text }}>{r.Name}</Text>
           </TouchableOpacity>
         ))}
 
         <View style={styles.switchRow}>
-          <Text>Change Password</Text>
-          <Switch value={changePassword} onValueChange={setChangePassword} />
+          <Text style={{ color: Colors.light.text }}>Change Password</Text>
+          <Switch
+            value={changePassword}
+            onValueChange={setChangePassword}
+            trackColor={{ false: "#CBD5E1", true: Colors.primary + "80" }}
+            thumbColor={changePassword ? Colors.primary : "#F1F5F9"}
+          />
         </View>
 
         {changePassword && (
           <>
             <Input
               label="Current Password"
-              secure
+              secure={true}
               value={currentPassword}
               onChange={setCurrentPassword}
               onBlur={verifyPassword}
@@ -216,15 +220,15 @@ export default function EditUserScreen() {
               <>
                 <Input
                   label="New Password"
-                  secure
+                  secure={true}
                   value={form.password}
-                  onChange={(v:any) => setForm({ ...form, password: v })}
+                  onChange={(v: any) => setForm({ ...form, password: v })}
                 />
                 <Input
                   label="Confirm Password"
-                  secure
+                  secure={true}
                   value={form.confirmPassword}
-                  onChange={(v:any) => setForm({ ...form, confirmPassword: v })}
+                  onChange={(v: any) => setForm({ ...form, confirmPassword: v })}
                 />
               </>
             )}
@@ -239,7 +243,6 @@ export default function EditUserScreen() {
   );
 }
 
-/* ---------------- REUSABLE INPUT ---------------- */
 const Input = ({
   label,
   value,
@@ -247,7 +250,7 @@ const Input = ({
   secure,
   onBlur,
 }: any) => (
-  <View>
+  <View style={{ marginBottom: 12 }}>
     <Text style={styles.label}>{label}</Text>
     <TextInput
       value={value}
@@ -255,54 +258,74 @@ const Input = ({
       onChangeText={onChange}
       onBlur={onBlur}
       style={styles.input}
+      placeholderTextColor={Colors.light.secondary}
     />
   </View>
 );
 
-/* ---------------- STYLES ---------------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F0F9FF" },
+  container: { flex: 1, backgroundColor: Colors.light.background },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
 
   header: {
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.card,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
   },
-  back: { color: "#0284C7" },
-  title: { fontSize: 18, fontWeight: "700", marginLeft: 16 },
+  backBtn: {
+    padding: 8,
+    backgroundColor: Colors.primary + "15",
+    borderRadius: 12,
+  },
+  title: { fontSize: 18, fontWeight: "700", marginLeft: 16, color: Colors.light.text },
 
   form: { padding: 16 },
-  label: { fontSize: 13, marginBottom: 6, marginTop: 12 },
+  label: { fontSize: 13, marginBottom: 6, marginTop: 12, fontWeight: "600", color: Colors.light.secondary },
   input: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
+    backgroundColor: Colors.light.card,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    borderRadius: 12,
     padding: 12,
+    color: Colors.light.text,
   },
 
   roleItem: {
-    padding: 12,
-    backgroundColor: "#fff",
-    marginBottom: 6,
-    borderRadius: 8,
+    padding: 14,
+    backgroundColor: Colors.light.card,
+    marginBottom: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "transparent",
   },
-  roleActive: { borderWidth: 1, borderColor: "#0284C7" },
+  roleActive: { borderColor: Colors.primary, backgroundColor: Colors.primary + "08" },
 
   switchRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginVertical: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
   },
 
   btn: {
-    backgroundColor: "#0284C7",
-    padding: 14,
-    borderRadius: 12,
+    backgroundColor: Colors.primary,
+    padding: 16,
+    borderRadius: 16,
     alignItems: "center",
     marginTop: 24,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  btnText: { color: "#fff", fontWeight: "600" },
+  btnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
 
-  error: { color: "red", marginBottom: 10 },
+  error: { color: Colors.error, marginBottom: 16, fontWeight: "600" },
 });
+

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -127,7 +128,7 @@ export default function UsersScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => toggleStatus(item)}>
-                    <Text style={[styles.link, { color: "#DC2626" }]}>
+                    <Text style={[styles.link, { color: Colors.error }]}>
                         {item.status === 1 ? "Disable" : "Enable"}
                     </Text>
                 </TouchableOpacity>
@@ -140,7 +141,7 @@ export default function UsersScreen() {
             {/* 🔝 HEADER */}
             <View style={styles.topHeader}>
                 <Pressable onPress={() => router.back()} style={styles.backBtn}>
-                    <Ionicons name="arrow-back" size={22} color="#0284C7" />
+                    <Ionicons name="arrow-back" size={22} color={Colors.primary} />
                 </Pressable>
 
                 <Text style={styles.title}>Users</Text>
@@ -155,9 +156,10 @@ export default function UsersScreen() {
 
             {/* 🔍 SEARCH */}
             <View style={styles.searchBox}>
-                <Ionicons name="search" size={18} color="#64748B" />
+                <Ionicons name="search" size={18} color={Colors.secondary} />
                 <TextInput
                     placeholder="Search users..."
+                    placeholderTextColor={Colors.secondary}
                     value={search}
                     onChangeText={setSearch}
                     style={styles.searchInput}
@@ -165,7 +167,7 @@ export default function UsersScreen() {
             </View>
 
             {loading && page === 1 ? (
-                <ActivityIndicator size="large" color="#0284C7" />
+                <ActivityIndicator size="large" color={Colors.primary} />
             ) : (
                 <FlatList
                     data={users}
@@ -184,7 +186,7 @@ export default function UsersScreen() {
                 />
             )}
 
-            {acting && <ActivityIndicator style={{ marginTop: 10 }} />}
+            {acting && <ActivityIndicator style={{ marginTop: 10 }} color={Colors.primary} />}
         </View>
     );
 }
@@ -192,7 +194,7 @@ export default function UsersScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F0F9FF",
+        backgroundColor: Colors.light.background,
         padding: 16,
     },
 
@@ -207,11 +209,11 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: "700",
-        color: "#0F172A",
+        color: Colors.light.text,
     },
 
     addBtn: {
-        backgroundColor: "#0284C7",
+        backgroundColor: Colors.primary,
         padding: 8,
         borderRadius: 10,
     },
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     searchBox: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: Colors.light.card,
         borderRadius: 14,
         paddingHorizontal: 12,
         paddingVertical: 10,
@@ -235,12 +237,12 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 8,
         fontSize: 15,
-        color: "#0F172A",
+        color: Colors.light.text,
     },
 
     /* CARD */
     card: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: Colors.light.card,
         borderRadius: 16,
         padding: 16,
         marginBottom: 12,
@@ -259,13 +261,13 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 16,
         fontWeight: "700",
-        color: "#0F172A",
+        color: Colors.light.text,
         flex: 1,
         marginRight: 8,
     },
     backBtn: {
         padding: 6,
-        backgroundColor: "#E0F2FE",
+        backgroundColor: Colors.primary + "15",
         borderRadius: 10,
     },
 
@@ -290,7 +292,7 @@ const styles = StyleSheet.create({
 
     text: {
         fontSize: 13,
-        color: "#475569",
+        color: Colors.light.secondary,
         marginTop: 4,
     },
 
@@ -301,13 +303,14 @@ const styles = StyleSheet.create({
     },
 
     link: {
-        color: "#0284C7",
+        color: Colors.primary,
         fontWeight: "600",
     },
 
     empty: {
         textAlign: "center",
-        color: "#64748B",
+        color: Colors.light.secondary,
         marginTop: 40,
     },
 });
+

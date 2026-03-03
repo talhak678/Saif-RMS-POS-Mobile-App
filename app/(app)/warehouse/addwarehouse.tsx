@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -85,7 +86,7 @@ export default function AddWarehouseScreen() {
       Alert.alert(
         "Error",
         err?.response?.data?.message ||
-          "Something went wrong. Try again."
+        "Something went wrong. Try again."
       );
     } finally {
       setLoading(false);
@@ -99,16 +100,16 @@ export default function AddWarehouseScreen() {
     >
       <Text style={styles.heading}>Add New Warehouse</Text>
 
-      <Input label="Warehouse Name *" value={form.name} onChange={(v:any) => onChange("name", v)} />
-      <Input label="Code *" value={form.code} onChange={(v:any) => onChange("code", v)} />
-      <Input label="Manager Name *" value={form.managerName} onChange={(v:any) => onChange("managerName", v)} />
-      <Input label="Manager Contact *" value={form.managerContactNumber} keyboardType="phone-pad" onChange={(v:any) => onChange("managerContactNumber", v)} />
-      <Input label="Country *" value={form.country} onChange={(v:any) => onChange("country", v)} />
-      <Input label="State *" value={form.state} onChange={(v:any) => onChange("state", v)} />
-      <Input label="City *" value={form.city} onChange={(v:any) => onChange("city", v)} />
-      <Input label="Address" value={form.address} multiline onChange={(v:any) => onChange("address", v)} />
-      <Input label="Latitude" value={form.latitude} keyboardType="numeric" onChange={(v:any) => onChange("latitude", v)} />
-      <Input label="Longitude" value={form.longitude} keyboardType="numeric" onChange={(v:any) => onChange("longitude", v)} />
+      <Input label="Warehouse Name *" value={form.name} onChange={(v: any) => onChange("name", v)} />
+      <Input label="Code *" value={form.code} onChange={(v: any) => onChange("code", v)} />
+      <Input label="Manager Name *" value={form.managerName} onChange={(v: any) => onChange("managerName", v)} />
+      <Input label="Manager Contact *" value={form.managerContactNumber} keyboardType="phone-pad" onChange={(v: any) => onChange("managerContactNumber", v)} />
+      <Input label="Country *" value={form.country} onChange={(v: any) => onChange("country", v)} />
+      <Input label="State *" value={form.state} onChange={(v: any) => onChange("state", v)} />
+      <Input label="City *" value={form.city} onChange={(v: any) => onChange("city", v)} />
+      <Input label="Address" value={form.address} multiline onChange={(v: any) => onChange("address", v)} />
+      <Input label="Latitude" value={form.latitude} keyboardType="numeric" onChange={(v: any) => onChange("latitude", v)} />
+      <Input label="Longitude" value={form.longitude} keyboardType="numeric" onChange={(v: any) => onChange("longitude", v)} />
 
       <TouchableOpacity
         style={[styles.button, loading && styles.disabled]}
@@ -131,7 +132,7 @@ const Input = ({ label, onChange, ...props }: any) => (
     <Text style={styles.label}>{label}</Text>
     <TextInput
       style={styles.input}
-      placeholderTextColor="#9CA3AF"
+      placeholderTextColor={Colors.light.secondary}
       onChangeText={onChange}
       {...props}
     />
@@ -141,14 +142,14 @@ const Input = ({ label, onChange, ...props }: any) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: Colors.light.background,
     padding: 16,
   },
 
   heading: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.light.text,
     marginBottom: 16,
   },
 
@@ -158,24 +159,24 @@ const styles = StyleSheet.create({
 
   label: {
     fontSize: 13,
-    color: "#374151",
+    color: Colors.light.secondary,
     marginBottom: 6,
     fontWeight: "500",
   },
 
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.light.border,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: "#111827",
+    color: Colors.light.text,
   },
 
   button: {
-    backgroundColor: "#14B8A6",
+    backgroundColor: Colors.primary,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
@@ -192,3 +193,4 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+

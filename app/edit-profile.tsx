@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -84,19 +85,20 @@ function Input({ label, value, onChange, editable = true }: any) {
         value={value}
         editable={editable}
         onChangeText={onChange}
-        style={[styles.input, !editable && { backgroundColor: "#E5E7EB" }]}
+        style={[styles.input, !editable && { backgroundColor: Colors.light.border }]}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 16, backgroundColor: "#F8FAFC" },
-  card: { backgroundColor: "#fff", padding: 20, borderRadius: 16, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 4 },
-  heading: { fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 20 },
-  label: { fontSize: 12, color: "#64748B", marginBottom: 4 },
-  input: { fontSize: 16, backgroundColor: "#F1F5F9", padding: 12, borderRadius: 10 },
-  button: { marginTop: 24, backgroundColor: "#0284C7", padding: 14, borderRadius: 12, alignItems: "center" },
+  container: { flex: 1, justifyContent: "center", padding: 16, backgroundColor: Colors.light.background },
+  card: { backgroundColor: Colors.light.card, padding: 20, borderRadius: 16, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 4 },
+  heading: { fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 20, color: Colors.light.text },
+  label: { fontSize: 12, color: Colors.light.secondary, marginBottom: 4 },
+  input: { fontSize: 16, backgroundColor: Colors.light.background, padding: 12, borderRadius: 10, color: Colors.light.text },
+  button: { marginTop: 24, backgroundColor: Colors.primary, padding: 14, borderRadius: 12, alignItems: "center" },
   buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  loading: { flex: 1, textAlign: "center", marginTop: 50, fontSize: 16 },
+  loading: { flex: 1, textAlign: "center", marginTop: 50, fontSize: 16, color: Colors.light.secondary },
 });
+

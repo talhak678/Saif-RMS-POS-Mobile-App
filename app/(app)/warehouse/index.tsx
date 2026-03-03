@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -107,6 +108,7 @@ export default function WarehousesScreen() {
 
       <TextInput
         placeholder="Search warehouse..."
+        placeholderTextColor={Colors.secondary}
         style={styles.search}
         value={search}
         onChangeText={setSearch}
@@ -125,7 +127,7 @@ export default function WarehousesScreen() {
       </View>
 
       {loading && page === 1 ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       ) : (
         <FlatList
           data={warehouses}
@@ -140,7 +142,7 @@ export default function WarehousesScreen() {
           }}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
-            <Text style={{ textAlign: "center" }}>
+            <Text style={{ textAlign: "center", color: Colors.secondary }}>
               No warehouses found
             </Text>
           }
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderRadius: 12,
@@ -165,13 +167,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.light.text,
   },
 
   addButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#14B8A6",
+    backgroundColor: Colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -186,7 +188,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: Colors.light.background,
     paddingHorizontal: 16,
     paddingTop: 12,
   },
@@ -194,23 +196,24 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.light.text,
     marginBottom: 12,
   },
 
   search: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.light.border,
     marginBottom: 12,
     fontSize: 15,
+    color: Colors.light.text,
   },
 
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
@@ -227,7 +230,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.light.text,
     flex: 1,
     marginRight: 8,
   },
@@ -252,7 +255,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 13,
-    color: "#4B5563",
+    color: Colors.light.secondary,
     marginTop: 2,
   },
 
@@ -263,8 +266,9 @@ const styles = StyleSheet.create({
   },
 
   link: {
-    color: "#2563EB",
+    color: Colors.primary,
     fontWeight: "600",
     fontSize: 14,
   },
 });
+

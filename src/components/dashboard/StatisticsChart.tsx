@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
@@ -12,7 +13,7 @@ export default function StatisticsChart({ stats }: any) {
         data={{
           labels: stats?.monthlyChart?.months || [],
           datasets: [
-            { data: stats?.monthlyChart?.customers || [], color: () => "#2563EB" },
+            { data: stats?.monthlyChart?.customers || [], color: () => Colors.primary },
             { data: stats?.monthlyChart?.orders || [], color: () => "#22C55E" },
           ],
           legend: ["Customers", "Orders"],
@@ -20,14 +21,14 @@ export default function StatisticsChart({ stats }: any) {
         width={width}
         height={240}
         chartConfig={{
-          backgroundGradientFrom: "#fff",
-          backgroundGradientTo: "#fff",
-          color: () => "#2563EB",
-          labelColor: () => "#64748B",
+          backgroundGradientFrom: Colors.light.card,
+          backgroundGradientTo: Colors.light.card,
+          color: () => Colors.primary,
+          labelColor: () => Colors.light.secondary,
         }}
         bezier
         style={{ borderRadius: 12 }}
-        
+
       />
     </View>
   );
@@ -35,14 +36,14 @@ export default function StatisticsChart({ stats }: any) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.card,
     borderRadius: 16,
-    // padding: 10,
-    // marginTop: 6,
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 12,
+    color: Colors.light.text,
   },
 });
+

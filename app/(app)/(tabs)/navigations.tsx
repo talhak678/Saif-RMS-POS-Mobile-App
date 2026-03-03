@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -113,7 +114,7 @@ export default function NavigationScreen() {
                   <Ionicons
                     name={item.icon as any}
                     size={22}
-                    color="#0284C7"
+                    color={Colors.primary}
                   />
                 </View>
                 <Text style={styles.title}>{item.title}</Text>
@@ -123,7 +124,7 @@ export default function NavigationScreen() {
                 <Ionicons
                   name={isOpen ? "chevron-up" : "chevron-down"}
                   size={20}
-                  color="#64748B"
+                  color={Colors.light.secondary}
                 />
               )}
             </TouchableOpacity>
@@ -140,7 +141,7 @@ export default function NavigationScreen() {
                     <Ionicons
                       name="ellipse"
                       size={8}
-                      color="#0284C7"
+                      color={Colors.primary}
                       style={{ marginRight: 10 }}
                     />
                     <Text style={styles.childText}>
@@ -161,7 +162,7 @@ export default function NavigationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: Colors.light.background,
     padding: 16,
   },
 
@@ -172,17 +173,17 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 26,
     fontWeight: "800",
-    color: "#0F172A",
+    color: Colors.light.text,
   },
 
   subHeading: {
     fontSize: 14,
-    color: "#64748B",
+    color: Colors.light.secondary,
     marginTop: 4,
   },
 
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 16,
     marginBottom: 14,
     shadowColor: "#000",
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   },
 
   iconWrapper: {
-    backgroundColor: "#E0F2FE",
+    backgroundColor: Colors.primary + "15",
     padding: 10,
     borderRadius: 12,
     marginRight: 12,
@@ -214,12 +215,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#0F172A",
+    color: Colors.light.text,
   },
 
   children: {
     borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
+    borderTopColor: Colors.light.border,
     paddingVertical: 6,
   },
 
@@ -232,7 +233,8 @@ const styles = StyleSheet.create({
 
   childText: {
     fontSize: 14,
-    color: "#334155",
+    color: Colors.light.text,
     fontWeight: "500",
   },
 });
+

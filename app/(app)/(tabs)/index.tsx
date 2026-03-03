@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import apiClient from "@/src/api/apiClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -45,7 +46,7 @@ export default function DashboardScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#0284C7" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
@@ -92,7 +93,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F0F9FF", // light sky
+    backgroundColor: Colors.light.background,
   },
 
   center: {
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
 
   /* HEADER */
   header: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     paddingHorizontal: 20,
     paddingVertical: 18,
     borderBottomLeftRadius: 24,
@@ -119,24 +120,24 @@ const styles = StyleSheet.create({
 
   welcome: {
     fontSize: 13,
-    color: "#64748B",
+    color: Colors.light.secondary,
   },
 
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#0284C7",
+    color: Colors.primary,
   },
 
   logoutBtn: {
-    backgroundColor: "#E0F2FE",
+    backgroundColor: Colors.primary + "15", // 15 is hex for ~8% opacity
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 10,
   },
 
   logoutText: {
-    color: "#0284C7",
+    color: Colors.primary,
     fontWeight: "600",
     fontSize: 14,
   },
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 20,
     padding: 16,
     marginBottom: 16,
@@ -158,3 +159,4 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
 });
+

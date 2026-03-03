@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -67,7 +68,7 @@ export default function AddCompanyScreen() {
       {/* 🔝 HEADER */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={22} color="#0284C7" />
+          <Ionicons name="arrow-back" size={22} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Add Company</Text>
         <View style={{ width: 32 }} />
@@ -76,25 +77,25 @@ export default function AddCompanyScreen() {
       {/* 🧾 FORM CARD */}
       <View style={styles.card}>
         <Section title="Basic Information" />
-        <Input label="Company Name *" value={form.name} onChangeText={(v:any) => onChange("name", v)} />
-        <Input label="Tax ID" value={form.taxId} onChangeText={(v:any) => onChange("taxId", v)} />
+        <Input label="Company Name *" value={form.name} onChangeText={(v: any) => onChange("name", v)} />
+        <Input label="Tax ID" value={form.taxId} onChangeText={(v: any) => onChange("taxId", v)} />
 
         <Section title="Contact Details" />
-        <Input label="Contact Person" value={form.contactPerson} onChangeText={(v:any) => onChange("contactPerson", v)} />
-        <Input label="Email *" keyboardType="email-address" value={form.email} onChangeText={(v:any) => onChange("email", v)} />
-        <Input label="Contact Number *" value={form.contactNumber} onChangeText={(v:any) => onChange("contactNumber", v)} />
+        <Input label="Contact Person" value={form.contactPerson} onChangeText={(v: any) => onChange("contactPerson", v)} />
+        <Input label="Email *" keyboardType="email-address" value={form.email} onChangeText={(v: any) => onChange("email", v)} />
+        <Input label="Contact Number *" value={form.contactNumber} onChangeText={(v: any) => onChange("contactNumber", v)} />
 
         <Section title="Address" />
-        <Input label="Country *" value={form.country} onChangeText={(v:any) => onChange("country", v)} />
-        <Input label="State *" value={form.state} onChangeText={(v:any) => onChange("state", v)} />
-        <Input label="City" value={form.city} onChangeText={(v:any) => onChange("city", v)} />
-        <Input label="Zip Code" value={form.zipCode} onChangeText={(v:any) => onChange("zipCode", v)} />
+        <Input label="Country *" value={form.country} onChangeText={(v: any) => onChange("country", v)} />
+        <Input label="State *" value={form.state} onChangeText={(v: any) => onChange("state", v)} />
+        <Input label="City" value={form.city} onChangeText={(v: any) => onChange("city", v)} />
+        <Input label="Zip Code" value={form.zipCode} onChangeText={(v: any) => onChange("zipCode", v)} />
         <Input
           label="Address"
           value={form.address}
           multiline
           style={{ height: 90, textAlignVertical: "top" }}
-          onChangeText={(v:any) => onChange("address", v)}
+          onChangeText={(v: any) => onChange("address", v)}
         />
       </View>
 
@@ -124,7 +125,7 @@ const Input = ({ label, style, ...props }: any) => (
     <Text style={styles.label}>{label}</Text>
     <TextInput
       style={[styles.input, style]}
-      placeholderTextColor="#94A3B8"
+      placeholderTextColor={Colors.light.secondary}
       {...props}
     />
   </View>
@@ -134,7 +135,7 @@ const Input = ({ label, style, ...props }: any) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0F9FF",
+    backgroundColor: Colors.light.background,
     padding: 16,
   },
 
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   },
 
   backBtn: {
-    backgroundColor: "#E0F2FE",
+    backgroundColor: Colors.primary + "15",
     padding: 8,
     borderRadius: 12,
   },
@@ -154,11 +155,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: Colors.light.text,
   },
 
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 18,
     padding: 16,
     marginBottom: 20,
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
   section: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0284C7",
+    color: Colors.primary,
     marginTop: 12,
     marginBottom: 6,
   },
@@ -183,30 +184,26 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#475569",
+    color: Colors.light.secondary,
     marginBottom: 4,
   },
 
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: Colors.light.border,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: "#0F172A",
+    color: Colors.light.text,
   },
 
   saveBtn: {
-    backgroundColor: "#0284C7",
+    backgroundColor: Colors.primary,
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
-    shadowColor: "#0284C7",
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 4,
   },
 
   saveText: {
@@ -215,3 +212,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
+

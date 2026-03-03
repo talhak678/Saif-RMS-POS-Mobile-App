@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -87,7 +88,7 @@ export default function CompaniesScreen() {
         style={styles.editBtn}
         onPress={() => router.push(`/company/${item.Id}/edit` as any)}
       >
-        <Ionicons name="create-outline" size={16} color="#0284C7" />
+        <Ionicons name="create-outline" size={16} color={Colors.primary} />
         <Text style={styles.editText}>Edit</Text>
       </Pressable>
     </TouchableOpacity>
@@ -98,7 +99,7 @@ export default function CompaniesScreen() {
       {/* 🔝 HEADER */}
       <View style={styles.topHeader}>
         <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={22} color="#0284C7" />
+          <Ionicons name="arrow-back" size={22} color={Colors.primary} />
         </Pressable>
 
         <Text style={styles.title}>Companies</Text>
@@ -113,9 +114,10 @@ export default function CompaniesScreen() {
 
       {/* 🔍 SEARCH */}
       <View style={styles.searchBox}>
-        <Ionicons name="search" size={18} color="#64748B" />
+        <Ionicons name="search" size={18} color={Colors.secondary} />
         <TextInput
           placeholder="Search company..."
+          placeholderTextColor={Colors.secondary}
           value={search}
           onChangeText={setSearch}
           style={styles.searchInput}
@@ -123,7 +125,7 @@ export default function CompaniesScreen() {
       </View>
 
       {loading && page === 1 ? (
-        <ActivityIndicator size="large" color="#0284C7" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       ) : (
         <FlatList
           data={companies}
@@ -148,7 +150,7 @@ export default function CompaniesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0F9FF",
+    backgroundColor: Colors.light.background,
     padding: 16,
   },
 
@@ -162,18 +164,18 @@ const styles = StyleSheet.create({
 
   backBtn: {
     padding: 6,
-    backgroundColor: "#E0F2FE",
+    backgroundColor: Colors.primary + "15",
     borderRadius: 10,
   },
 
   title: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#0F172A",
+    color: Colors.light.text,
   },
 
   addBtn: {
-    backgroundColor: "#0284C7",
+    backgroundColor: Colors.primary,
     padding: 8,
     borderRadius: 10,
   },
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 14,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -197,12 +199,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     fontSize: 15,
-    color: "#0F172A",
+    color: Colors.light.text,
   },
 
   /* CARD */
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.card,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -221,7 +223,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0F172A",
+    color: Colors.light.text,
     flex: 1,
     marginRight: 8,
   },
@@ -247,7 +249,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 13,
-    color: "#475569",
+    color: Colors.light.secondary,
     marginTop: 4,
   },
 
@@ -259,14 +261,15 @@ const styles = StyleSheet.create({
   },
 
   editText: {
-    color: "#0284C7",
+    color: Colors.primary,
     fontWeight: "600",
     marginLeft: 4,
   },
 
   empty: {
     textAlign: "center",
-    color: "#64748B",
+    color: Colors.light.secondary,
     marginTop: 40,
   },
 });
+

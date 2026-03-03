@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -21,10 +22,10 @@ export default function MetricsCards({ stats }: any) {
     <View style={styles.row}>
       {cards.map((c, i) => (
         <View key={i} style={styles.card}>
-          <Ionicons name={c.icon as any} size={22} color="#2563EB" />
+          <Ionicons name={c.icon as any} size={22} color={Colors.primary} />
           <Text style={styles.label}>{c.label}</Text>
           <Text style={styles.value}>{c.value}</Text>
-          <Text style={{ color: c.growth >= 0 ? "#16A34A" : "#DC2626" }}>
+          <Text style={{ color: c.growth >= 0 ? Colors.success : Colors.error, fontWeight: "600" }}>
             {c.growth >= 0 ? "+" : ""}
             {c.growth}%
           </Text>
@@ -41,18 +42,22 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "48%",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.card,
     borderRadius: 16,
     padding: 16,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
   },
   label: {
     marginTop: 8,
-    color: "#64748B",
+    color: Colors.light.secondary,
+    fontSize: 14,
   },
   value: {
     fontSize: 22,
     fontWeight: "800",
     marginVertical: 4,
+    color: Colors.light.text,
   },
 });
+

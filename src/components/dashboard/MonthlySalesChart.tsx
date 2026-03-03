@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 
@@ -15,16 +16,16 @@ export default function MonthlySalesChart({ stats }: any) {
         }}
         width={screenWidth}
         height={220}
-        yAxisLabel=""  
-        yAxisSuffix=""      
+        yAxisLabel=""
+        yAxisSuffix=""
         fromZero
         chartConfig={{
-          backgroundColor: "#fff",
-          backgroundGradientFrom: "#fff",
-          backgroundGradientTo: "#fff",
+          backgroundColor: Colors.light.card,
+          backgroundGradientFrom: Colors.light.card,
+          backgroundGradientTo: Colors.light.card,
           decimalPlaces: 0,
-          color: () => "#2563EB",
-          labelColor: () => "#64748B",
+          color: () => Colors.primary,
+          labelColor: () => Colors.light.secondary,
         }}
         style={{ borderRadius: 12 }}
       />
@@ -34,14 +35,14 @@ export default function MonthlySalesChart({ stats }: any) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.card,
     borderRadius: 16,
-    // padding: 16,
-    // marginTop: 16,
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 12,
+    color: Colors.light.text,
   },
 });
+

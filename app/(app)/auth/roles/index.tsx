@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -108,7 +109,7 @@ export default function RolesScreen() {
                     <Text style={styles.link}>Edit</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => toggleStatus(item)}>
-                    <Text style={[styles.link, { color: "#DC2626" }]}>
+                    <Text style={[styles.link, { color: Colors.error }]}>
                         {item.Status === 1 ? "Disable" : "Enable"}
                     </Text>
                 </TouchableOpacity>
@@ -121,7 +122,7 @@ export default function RolesScreen() {
             {/* HEADER */}
             <View style={styles.topHeader}>
                 <Pressable onPress={() => router.back()} style={styles.backBtn}>
-                    <Ionicons name="arrow-back" size={22} color="#0284C7" />
+                    <Ionicons name="arrow-back" size={22} color={Colors.primary} />
                 </Pressable>
 
                 <Text style={styles.title}>Roles</Text>
@@ -136,9 +137,10 @@ export default function RolesScreen() {
 
             {/* SEARCH */}
             <View style={styles.searchBox}>
-                <Ionicons name="search" size={18} color="#64748B" />
+                <Ionicons name="search" size={18} color={Colors.secondary} />
                 <TextInput
                     placeholder="Search roles..."
+                    placeholderTextColor={Colors.secondary}
                     value={search}
                     onChangeText={setSearch}
                     style={styles.searchInput}
@@ -146,7 +148,7 @@ export default function RolesScreen() {
             </View>
 
             {loading && page === 1 ? (
-                <ActivityIndicator size="large" color="#0284C7" />
+                <ActivityIndicator size="large" color={Colors.primary} />
             ) : (
                 <FlatList
                     data={roles}
@@ -165,31 +167,32 @@ export default function RolesScreen() {
                 />
             )}
 
-            {acting && <ActivityIndicator style={{ marginTop: 10 }} />}
+            {acting && <ActivityIndicator style={{ marginTop: 10 }} color={Colors.primary} />}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F0F9FF", padding: 16 },
+    container: { flex: 1, backgroundColor: Colors.light.background, padding: 16 },
 
     topHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
-    title: { fontSize: 20, fontWeight: "700", color: "#0F172A" },
-    backBtn: { padding: 6, backgroundColor: "#E0F2FE", borderRadius: 10 },
-    addBtn: { backgroundColor: "#0284C7", padding: 8, borderRadius: 10 },
+    title: { fontSize: 20, fontWeight: "700", color: Colors.light.text },
+    backBtn: { padding: 6, backgroundColor: Colors.primary + "15", borderRadius: 10 },
+    addBtn: { backgroundColor: Colors.primary, padding: 8, borderRadius: 10 },
 
-    searchBox: { flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 14, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 14 },
-    searchInput: { flex: 1, marginLeft: 8, fontSize: 15, color: "#0F172A" },
+    searchBox: { flexDirection: "row", alignItems: "center", backgroundColor: Colors.light.card, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 14 },
+    searchInput: { flex: 1, marginLeft: 8, fontSize: 15, color: Colors.light.text },
 
-    card: { backgroundColor: "#fff", borderRadius: 16, padding: 16, marginBottom: 12, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 10, elevation: 3 },
+    card: { backgroundColor: Colors.light.card, borderRadius: 16, padding: 16, marginBottom: 12, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 10, elevation: 3 },
     rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-    name: { fontSize: 16, fontWeight: "700", flex: 1, marginRight: 8, color: "#0F172A" },
+    name: { fontSize: 16, fontWeight: "700", flex: 1, marginRight: 8, color: Colors.light.text },
     statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
     active: { backgroundColor: "#DCFCE7" },
     inactive: { backgroundColor: "#FEE2E2" },
     statusText: { fontSize: 12, fontWeight: "600" },
-    text: { fontSize: 13, color: "#475569", marginTop: 4 },
+    text: { fontSize: 13, color: Colors.light.secondary, marginTop: 4 },
     actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 12 },
-    link: { color: "#0284C7", fontWeight: "600" },
-    empty: { textAlign: "center", color: "#64748B", marginTop: 40 },
+    link: { color: Colors.primary, fontWeight: "600" },
+    empty: { textAlign: "center", color: Colors.light.secondary, marginTop: 40 },
 });
+

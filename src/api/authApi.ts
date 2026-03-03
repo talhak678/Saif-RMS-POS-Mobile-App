@@ -1,20 +1,11 @@
 import apiClient from "./apiClient";
-import apiProtected from "./apiProtected";
-import apiPublic from "./apiPublic";
 
-export const registerApi = (data: {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-}) => apiPublic.post("/auth/register", data);
-
+// Login — POST /auth/login
 export const loginApi = (data: { email: string; password: string }) =>
-  apiProtected.post("/auth/login", data);
+  apiClient.post("/auth/login", data);
 
-export const getProfileApi = () => apiClient.get("/profile");
+// Get current user — GET /auth/me (requires Authorization header)
+export const getMeApi = () => apiClient.get("/auth/me");
 
-export const updateProfileApi = (data: {
-  first_name: string;
-  last_name: string;
-}) => apiClient.put("/profile", data);
+// Logout — POST /auth/logout (requires Authorization header)
+export const logoutApi = () => apiClient.post("/auth/logout");

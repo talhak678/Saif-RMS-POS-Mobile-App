@@ -1,81 +1,119 @@
+import { logoutApi } from "@/src/api/authApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export interface Role {
-  roleId: number;
-  roleName: string;
-  roleType: number;
+// ─── Type Definitions ─────────────────────────────────────────────────────────
+
+export interface Permission {
+  id: string;
+  action: string;
 }
 
-export interface Warehouse {
-  id: number;
+export interface UserRole {
+  id: string;
   name: string;
-  code: string;
+  permissions: Permission[];
 }
 
-export interface Workspace {
-  Id: number;
-  Name: string;
-  Code: string;
-  Status: number;
-  DeletedDate: string | null;
+export interface UserRestaurant {
+  id: string;
+  name: string;
+  slug?: string;
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
-  username: string | null;
   email: string;
-  phoneNumber: string;
-  warehouse: Warehouse;
-  warehouseZone: any;
-  roles: Role[];
-  workspace: Workspace;
+  roleId?: string;
+  restaurantId?: string;
+  role?: UserRole;
+  restaurant?: UserRestaurant;
 }
 
 export interface AuthContextType {
   user: User | null;
-  setUser: (user: User | null) => Promise<void>;
+  token: string | null;
   loading: boolean;
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
+  saveSession: (token: string, user: User) => Promise<void>;
+  logout: () => Promise<void>;
 }
+
+// ─── Context ──────────────────────────────────────────────────────────────────
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUserState] = useState<User | null>(null);
+  const [token, setTokenState] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from AsyncStorage on mount
+  // Load session from AsyncStorage on mount
   useEffect(() => {
-    const loadUser = async () => {
+    const loadSession = async () => {
       try {
-        const json = await AsyncStorage.getItem("user");
-        if (json) setUserState(JSON.parse(json));
+        const storedToken = await AsyncStorage.getItem("auth_token");
+        const storedUser = await AsyncStorage.getItem("user_data");
+        if (storedToken) setTokenState(storedToken);
+        if (storedUser) setUserState(JSON.parse(storedUser));
       } catch (err) {
-        console.log("Failed to load user from storage:", err);
+        console.log("Failed to load session:", err);
       } finally {
         setLoading(false);
       }
     };
-    loadUser();
+    loadSession();
   }, []);
 
-  // Update user in context and AsyncStorage
-  const setUser = async (u: User | null) => {
+  // Save token + user to state and AsyncStorage
+  const saveSession = async (newToken: string, newUser: User) => {
+    setTokenState(newToken);
+    setUserState(newUser);
+    await AsyncStorage.setItem("auth_token", newToken);
+    await AsyncStorage.setItem("user_data", JSON.stringify(newUser));
+  };
+
+  // Update just the user object
+  const setUser = (u: User | null) => {
+    setUserState(u);
+    if (u) {
+      AsyncStorage.setItem("user_data", JSON.stringify(u));
+    } else {
+      AsyncStorage.removeItem("user_data");
+    }
+  };
+
+  const setToken = (t: string | null) => {
+    setTokenState(t);
+    if (t) {
+      AsyncStorage.setItem("auth_token", t);
+    } else {
+      AsyncStorage.removeItem("auth_token");
+    }
+  };
+
+  // Logout — call API, clear storage, navigate to login
+  const logout = async () => {
     try {
-      setUserState(u);
-      if (u) {
-        await AsyncStorage.setItem("user", JSON.stringify(u));
-      } else {
-        await AsyncStorage.removeItem("user");
-      }
-    } catch (err) {
-      console.log("Failed to save user to storage:", err);
+      await logoutApi();
+    } catch {
+      // Proceed with logout even if API fails
+    } finally {
+      setUserState(null);
+      setTokenState(null);
+      await AsyncStorage.removeItem("auth_token");
+      await AsyncStorage.removeItem("user_data");
+      router.replace("/(auth)/sign-in");
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, setUser, setToken, saveSession, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

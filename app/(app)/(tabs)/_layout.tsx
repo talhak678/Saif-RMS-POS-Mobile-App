@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
@@ -7,10 +8,10 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, 
+        headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: "#0284C7", // sky blue
-        tabBarInactiveTintColor: "#64748B",        
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: Colors.secondary,
         tabBarStyle: {
           position: "absolute",
           bottom: 12,
@@ -18,7 +19,7 @@ export default function TabLayout() {
           right: 12,
           height: 60,
           borderRadius: 20,
-          backgroundColor: "#FFFFFF",
+          backgroundColor: Colors.card,
           borderTopWidth: 0,
           elevation: 8,
           shadowColor: "#000",
@@ -34,8 +35,8 @@ export default function TabLayout() {
         },
         animation:
           Platform.OS === "ios" ? "fade" : "shift",
-          
-        }}
+
+      }}
     >
       {/* HOME */}
       <Tabs.Screen

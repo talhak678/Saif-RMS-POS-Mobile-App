@@ -1,7 +1,8 @@
+import { Colors } from "@/constants/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ProtectedRoute from "../../src/components/ProtectedRoute";
 
 interface User {
@@ -19,7 +20,6 @@ export default function Welcome() {
     const loadUser = async () => {
       try {
         const userData = await AsyncStorage.getItem("user");
-        console.log('userrr',userData);
         if (userData) {
           setUser(JSON.parse(userData));
         }
@@ -40,43 +40,74 @@ export default function Welcome() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#2563EB" />
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
 
   return (
     <ProtectedRoute>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 20,
-        }}
-      >
-        <Text style={{ fontSize: 28, fontWeight: "700", marginBottom: 10, color: "#2563EB" }}>
-        Welcome {user?.name || "User"} 
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          Welcome {user?.name || "User"}
         </Text>
 
-        <Text style={{ fontSize: 16, color: "#6B7280", marginBottom: 30 }}>
+        <Text style={styles.subtitle}>
           You are logged in successfully
         </Text>
 
         <TouchableOpacity
           onPress={handleLogout}
-          style={{
-            backgroundColor: "#EF4444",
-            padding: 14,
-            borderRadius: 10,
-            minWidth: 120,
-            alignItems: "center",
-          }}
+          style={styles.logoutBtn}
         >
-          <Text style={{ color: "#FFF", fontWeight: "600" }}>Logout</Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </ProtectedRoute>
   );
 }
+
+const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.light.background,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: Colors.light.background,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "800",
+    marginBottom: 10,
+    color: Colors.primary
+  },
+  subtitle: {
+    fontSize: 16,
+    color: Colors.light.secondary,
+    marginBottom: 30
+  },
+  logoutBtn: {
+    backgroundColor: Colors.error,
+    padding: 16,
+    borderRadius: 14,
+    minWidth: 150,
+    alignItems: "center",
+    shadowColor: Colors.error,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  logoutText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+});
+

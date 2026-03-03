@@ -1,169 +1,321 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Colors } from "@/constants/theme";
+import { loginApi } from "@/src/api/authApi";
+import { useAuth } from "@/src/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { loginApi } from "../../src/api/authApi";
-import { isValidEmail, isValidPassword } from "../../src/utils/validation";
+
+const { height } = Dimensions.get("window");
 
 export default function SignIn() {
+  const { saveSession } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-const handleSignIn = async () => {
-  if (!isValidEmail(email)) {
-    Alert.alert("Invalid email");
-    return;
-  }
+  const handleSignIn = async () => {
+    setError(null);
 
-  if (!isValidPassword(password)) {
-    Alert.alert("Password must be at least 6 characters");
-    return;
-  }
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await loginApi({
-      email,
-      password,
-    });
+      const response = await loginApi({ email: email.trim(), password });
+      const result = response.data;
 
-    const accessToken = response.data.data.tokens.accessToken;
-    const user = response.data.data.user;
+      if (!result.success) {
+        setError(result.message || "Login failed");
+        return;
+      }
 
-    await AsyncStorage.setItem("token", accessToken);
-    await AsyncStorage.setItem("user", JSON.stringify(user));
+      const { token, user } = result.data;
 
-    router.replace("/");
+      // Save session to SecureStore + context
+      await saveSession(token, user);
 
-  } catch (error: any) {
-    Alert.alert(
-      "Login Failed",
-      error.response?.data?.message || "Something went wrong"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
-
+      router.replace("/(app)/(tabs)");
+    } catch (err: any) {
+      const status = err.response?.status;
+      if (status === 402) {
+        setError("Your subscription has expired. Please renew your plan.");
+      } else {
+        setError(err.response?.data?.message || "Invalid email or password");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Sign In</Text>
-        <Text style={styles.subtitle}>Access your account</Text>
-
-        <TextInput
-          placeholder="Email address"
-          placeholderTextColor="#9CA3AF"
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#9CA3AF"
-          style={styles.input}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSignIn}
-          disabled={loading}
+    <>
+      <StatusBar barStyle="light-content" />
+      <LinearGradient
+        colors={["#5d69b9", "#3b4a9b"]}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.flex}
         >
-          {loading ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.buttonText}>Sign In</Text>
-          )}
-        </TouchableOpacity>
+          {/* ── Logo / Brand area ───────────────────────────── */}
+          <View style={styles.brandArea}>
+            <View style={styles.logoCircle}>
+              <Ionicons name="storefront" size={36} color="#fff" />
+            </View>
+            <Text style={styles.brandTitle}>RMS POS</Text>
+            <Text style={styles.brandTagline}>Restaurant Management System</Text>
+          </View>
 
-        {/* <Text style={styles.footerText}>
-          Don’t have an account?{" "}
-          <Link href="/(auth)/sign-up" style={styles.link}>
-            Create one
-          </Link>
-        </Text> */}
-      </View>
-    </View>
+          {/* ── Login Card ──────────────────────────────────── */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Welcome Back</Text>
+            <Text style={styles.cardSubtitle}>Sign in to your account</Text>
+
+            {/* Email */}
+            <View style={styles.inputWrapper}>
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color={Colors.light.secondary}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                placeholder="Email address"
+                placeholderTextColor={Colors.light.secondary}
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={email}
+                onChangeText={(v) => {
+                  setEmail(v);
+                  setError(null);
+                }}
+              />
+            </View>
+
+            {/* Password */}
+            <View style={styles.inputWrapper}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color={Colors.light.secondary}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor={Colors.light.secondary}
+                style={[styles.input, { flex: 1 }]}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={(v) => {
+                  setPassword(v);
+                  setError(null);
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword((s) => !s)}
+                style={styles.eyeBtn}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color={Colors.light.secondary}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Inline Error */}
+            {error && (
+              <View style={styles.errorBox}>
+                <Ionicons name="alert-circle-outline" size={15} color="#DC2626" />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            )}
+
+            {/* Sign In Button */}
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleSignIn}
+              disabled={loading}
+              activeOpacity={0.85}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text style={styles.buttonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* ── Footer ──────────────────────────────────────── */}
+          <Text style={styles.footer}>© 2025 RMS POS · All rights reserved</Text>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </>
   );
 }
 
-
-
 const styles = StyleSheet.create({
-  container: {
+  flex: { flex: 1 },
+  gradient: {
     flex: 1,
-    backgroundColor: "#F3F4F6",
-    justifyContent: "center",
-    padding: 20,
+    paddingHorizontal: 24,
+    paddingTop: Platform.OS === "android" ? 40 : 60,
+    paddingBottom: 24,
   },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: "#111827",
-    marginBottom: 6,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 10,
-    padding: 14,
-    fontSize: 15,
-    marginBottom: 16,
-    color: "#111827",
-  },
-  button: {
-    backgroundColor: "#2563EB",
-    padding: 16,
-    borderRadius: 10,
+
+  // Brand
+  brandArea: {
     alignItems: "center",
-    marginTop: 8,
+    marginBottom: height * 0.04,
   },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+  logoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.35)",
   },
-  footerText: {
-    marginTop: 20,
+  brandTitle: {
+    fontSize: 34,
+    fontWeight: "800",
+    color: "#fff",
+    letterSpacing: 2,
+  },
+  brandTagline: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.75)",
+    marginTop: 4,
+    letterSpacing: 0.5,
+  },
+
+  // Card
+  card: {
+    backgroundColor: "rgba(255,255,255,0.97)",
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 30,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 12,
+  },
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: Colors.light.text,
+    marginBottom: 4,
     textAlign: "center",
-    fontSize: 14,
-    color: "#6B7280",
   },
-  link: {
-    color: "#2563EB",
-    fontWeight: "600",
+  cardSubtitle: {
+    fontSize: 14,
+    color: Colors.light.secondary,
+    textAlign: "center",
+    marginBottom: 28,
+  },
+
+  // Input
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: Colors.light.border,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: Platform.OS === "ios" ? 14 : 4,
+    marginBottom: 14,
+    backgroundColor: "#FAFBFF",
+  },
+  inputIcon: { marginRight: 10 },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: Colors.light.text,
+    paddingVertical: 8,
+  },
+  eyeBtn: { padding: 4 },
+
+  // Error
+  errorBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FEF2F2",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 14,
+    gap: 6,
+  },
+  errorText: {
+    fontSize: 13,
+    color: "#DC2626",
+    flex: 1,
+    fontWeight: "500",
+  },
+
+  // Button
+  button: {
+    backgroundColor: Colors.primary,
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginTop: 4,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+  buttonDisabled: { opacity: 0.7 },
+  buttonText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+
+  // Footer
+  footer: {
+    textAlign: "center",
+    color: "rgba(255,255,255,0.55)",
+    fontSize: 12,
+    marginTop: 28,
   },
 });

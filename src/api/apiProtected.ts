@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const apiProtected = axios.create({
-  baseURL: "https://3pl-dynamics-rho.vercel.app/api",
+  baseURL: "https://saif-rms-pos-backend.vercel.app/api",
   // baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",

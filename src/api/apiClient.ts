@@ -1,31 +1,33 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { router } from "expo-router";
 
 const apiClient = axios.create({
-  baseURL: "https://3pl-dynamics-rho.vercel.app/api",
-  // baseURL: "http://localhost:3000/api",
+  baseURL: "https://saif-rms-pos-backend.vercel.app/api",
   headers: { "Content-Type": "application/json" },
 });
 
-apiClient.interceptors.request.use(async (config:any) => {
-  const token = await AsyncStorage.getItem("token");
-  console.log("TOKEN FROM STORAGE:", token);
-  console.log("REQUEST URL:", config.url);
-
+// Attach token to every request
+apiClient.interceptors.request.use(async (config: any) => {
+  const token = await AsyncStorage.getItem("auth_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 
-
-// apiClient.interceptors.request.use(async (config) => {
-//   const token = await AsyncStorage.getItem("token");
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+// Auto-logout on 401 or 402
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const status = error.response?.status;
+    if (status === 401 || status === 402) {
+      await AsyncStorage.removeItem("auth_token");
+      await AsyncStorage.removeItem("user_data");
+      router.replace("/(auth)/sign-in");
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;

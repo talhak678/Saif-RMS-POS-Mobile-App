@@ -3,150 +3,153 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  LayoutAnimation,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  UIManager,
   View,
 } from "react-native";
 
-/* Enable animation on Android */
-if (Platform.OS === "android") {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
-
-/* 🔹 MODULES DATA */
+// ─── Module Data ──────────────────────────────────────────────────────────────
 const modules = [
   {
-    title: "Companies Management",
-    icon: "business-outline",
-    children: [
-      { title: "Companies", route: "/company" },
-      { title: "Facilities", route: "/company/facilities" },
-    ],
-  },
-  {
-    title: "Warehouse Management",
-    icon: "home-outline",
-    route: "/warehouse",
-  },
-  {
-    title: "Authentication",
-    icon: "lock-closed-outline",
-    children: [
-      { title: "User Management", route: "/auth/users" },
-      { title: "Role Management", route: "/auth/roles" },
-    ],
-  },
-  {
-    title: "Product Management",
-    icon: "cube-outline",
-    route: "/products",
-  },
-  {
-    title: "Inventory & Vendors",
-    icon: "layers-outline",
-    route: "/inventory",
+    title: "Reports",
+    icon: "bar-chart-outline" as const,
+    color: "#5d69b9",
+    bg: "#EEF0FB",
+    route: "/reports",
   },
   {
     title: "Customers & Orders",
-    icon: "people-outline",
-    route: "/orders",
+    icon: "people-outline" as const,
+    color: "#f97316",
+    bg: "#FFF7ED",
+    children: [
+      { title: "Incoming Orders", icon: "receipt-outline" as const, route: "/orders/incoming" },
+      { title: "Customers", icon: "person-outline" as const, route: "/orders/customers" },
+      { title: "Order History", icon: "time-outline" as const, route: "/orders/history" },
+    ],
   },
   {
-    title: "Delivery & Returns",
-    icon: "car-outline",
-    route: "/delivery",
+    title: "Riders",
+    icon: "bicycle-outline" as const,
+    color: "#0d9488",
+    bg: "#F0FDFA",
+    route: "/riders",
   },
   {
-    title: "Container Unit",
-    icon: "file-tray-stacked-outline",
-    route: "/containers",
+    title: "Menu & Categories",
+    icon: "restaurant-outline" as const,
+    color: "#8b5cf6",
+    bg: "#F5F3FF",
+    children: [
+      { title: "Categories", icon: "grid-outline" as const, route: "/menu/categories" },
+      { title: "Menu Items", icon: "fast-food-outline" as const, route: "/menu/items" },
+    ],
   },
   {
-    title: "Fulfilment & Storage",
-    icon: "storefront-outline",
-    route: "/fulfilment",
+    title: "Inventory & Recipes",
+    icon: "layers-outline" as const,
+    color: "#0891b2",
+    bg: "#ECFEFF",
+    children: [
+      { title: "Inventory", icon: "cube-outline" as const, route: "/inventory" },
+      { title: "Recipes", icon: "flask-outline" as const, route: "/inventory/recipes" },
+      { title: "Stock", icon: "archive-outline" as const, route: "/inventory/stock" },
+    ],
+  },
+  {
+    title: "Settings",
+    icon: "settings-outline" as const,
+    color: "#64748b",
+    bg: "#F8FAFC",
+    route: "/settings",
   },
 ];
 
+// ─── Screen ───────────────────────────────────────────────────────────────────
 export default function NavigationScreen() {
   const router = useRouter();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
-    LayoutAnimation.easeInEaseOut();
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.heading}>Modules</Text>
-        <Text style={styles.subHeading}>
-          Select a module to continue
-        </Text>
+        <Text style={styles.subHeading}>Select a module to navigate</Text>
       </View>
 
-      {/* Modules List */}
-      {modules.map((item, index) => {
-        const hasChildren = !!item.children;
+      {/* Module Cards */}
+      {modules.map((mod, index) => {
+        const hasChildren = !!mod.children;
         const isOpen = openIndex === index;
 
         return (
           <View key={index} style={styles.card}>
-            {/* Parent */}
+            {/* Parent Row */}
             <TouchableOpacity
               style={styles.row}
-              activeOpacity={0.85}
+              activeOpacity={0.8}
               onPress={() =>
-                hasChildren
-                  ? toggle(index)
-                  : router.push(item.route as any)
+                hasChildren ? toggle(index) : router.push((mod as any).route)
               }
             >
               <View style={styles.left}>
-                <View style={styles.iconWrapper}>
-                  <Ionicons
-                    name={item.icon as any}
-                    size={22}
-                    color={Colors.primary}
-                  />
+                <View style={[styles.iconWrap, { backgroundColor: mod.bg }]}>
+                  <Ionicons name={mod.icon} size={22} color={mod.color} />
                 </View>
-                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.modTitle}>{mod.title}</Text>
               </View>
 
-              {hasChildren && (
-                <Ionicons
-                  name={isOpen ? "chevron-up" : "chevron-down"}
-                  size={20}
-                  color={Colors.light.secondary}
-                />
-              )}
+              <View style={styles.rightWrap}>
+                {hasChildren ? (
+                  <Ionicons
+                    name={isOpen ? "chevron-up" : "chevron-down"}
+                    size={18}
+                    color={Colors.light.secondary}
+                  />
+                ) : (
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color={Colors.light.secondary}
+                  />
+                )}
+              </View>
             </TouchableOpacity>
 
-            {/* Sub Modules */}
+            {/* Sub-modules */}
             {hasChildren && isOpen && (
               <View style={styles.children}>
-                {item.children!.map((child, i) => (
+                {mod.children!.map((child, i) => (
                   <TouchableOpacity
                     key={i}
-                    style={styles.childRow}
+                    style={[
+                      styles.childRow,
+                      i < mod.children!.length - 1 && styles.childBorder,
+                    ]}
                     onPress={() => router.push(child.route as any)}
+                    activeOpacity={0.7}
                   >
+                    <View style={[styles.childIcon, { backgroundColor: mod.bg }]}>
+                      <Ionicons name={child.icon} size={16} color={mod.color} />
+                    </View>
+                    <Text style={styles.childText}>{child.title}</Text>
                     <Ionicons
-                      name="ellipse"
-                      size={8}
-                      color={Colors.primary}
-                      style={{ marginRight: 10 }}
+                      name="chevron-forward"
+                      size={14}
+                      color={Colors.light.secondary}
+                      style={{ marginLeft: "auto" }}
                     />
-                    <Text style={styles.childText}>
-                      {child.title}
-                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -154,87 +157,105 @@ export default function NavigationScreen() {
           </View>
         );
       })}
+
+      {/* Bottom padding for floating tab bar */}
+      <View style={{ height: 100 }} />
     </ScrollView>
   );
 }
 
-/* 🎨 STYLES */
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light.background,
+  },
+  content: {
     padding: 16,
+    paddingTop: 52,
   },
 
-  header: {
-    marginBottom: 20,
-  },
-
+  // Header
+  header: { marginBottom: 20 },
   heading: {
     fontSize: 26,
     fontWeight: "800",
     color: Colors.light.text,
+    letterSpacing: 0.3,
   },
-
   subHeading: {
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.light.secondary,
     marginTop: 4,
   },
 
+  // Card
   card: {
     backgroundColor: Colors.light.card,
-    borderRadius: 16,
-    marginBottom: 14,
+    borderRadius: 18,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
     overflow: "hidden",
   },
-
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
   },
-
-  left: {
-    flexDirection: "row",
+  left: { flexDirection: "row", alignItems: "center", flex: 1 },
+  iconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
     alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
   },
-
-  iconWrapper: {
-    backgroundColor: Colors.primary + "15",
-    padding: 10,
-    borderRadius: 12,
-    marginRight: 12,
-  },
-
-  title: {
+  modTitle: {
     fontSize: 15,
     fontWeight: "700",
     color: Colors.light.text,
+    flex: 1,
+  },
+  rightWrap: {
+    width: 28,
+    alignItems: "flex-end",
   },
 
+  // Sub-modules
   children: {
     borderTopWidth: 1,
     borderTopColor: Colors.light.border,
-    paddingVertical: 6,
+    backgroundColor: "#FAFBFF",
   },
-
   childRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 13,
+    paddingHorizontal: 16,
+    gap: 12,
   },
-
+  childBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
+  },
+  childIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   childText: {
     fontSize: 14,
+    fontWeight: "600",
     color: Colors.light.text,
-    fontWeight: "500",
+    flex: 1,
   },
 });
-

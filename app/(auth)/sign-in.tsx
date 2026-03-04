@@ -4,24 +4,30 @@ import { useAuth } from "@/src/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
-  KeyboardAvoidingView,
+  Dimensions, Image, KeyboardAvoidingView,
   Platform,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 const { height } = Dimensions.get("window");
 
 export default function SignIn() {
-  const { saveSession } = useAuth();
+  const { saveSession, token, user } = useAuth();
+
+  // ── If already logged in, skip to dashboard ──
+  useEffect(() => {
+    if (token && user) {
+      router.replace("/");
+    }
+  }, [token, user]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -62,7 +68,7 @@ export default function SignIn() {
       // Save session to SecureStore + context
       await saveSession(token, user);
 
-      router.replace("/(app)/(tabs)");
+      router.replace("/");
     } catch (err: any) {
       const status = err.response?.status;
       if (status === 402) {
@@ -90,10 +96,12 @@ export default function SignIn() {
         >
           {/* ── Logo / Brand area ───────────────────────────── */}
           <View style={styles.brandArea}>
-            <View style={styles.logoCircle}>
-              <Ionicons name="storefront" size={36} color="#fff" />
-            </View>
-            <Text style={styles.brandTitle}>RMS POS</Text>
+            <Image
+              source={require("../../assets/images/icon.png")}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.brandTitle}>PlatterOS</Text>
             <Text style={styles.brandTagline}>Restaurant Management System</Text>
           </View>
 
@@ -180,7 +188,7 @@ export default function SignIn() {
           </View>
 
           {/* ── Footer ──────────────────────────────────────── */}
-          <Text style={styles.footer}>© 2025 RMS POS · All rights reserved</Text>
+          <Text style={styles.footer}>© 2025 PlatterOS · All rights reserved</Text>
         </KeyboardAvoidingView>
       </LinearGradient>
     </>
@@ -201,16 +209,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: height * 0.04,
   },
-  logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    alignItems: "center",
-    justifyContent: "center",
+  logoImage: {
+    width: 110,
+    height: 110,
     marginBottom: 14,
-    borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.35)",
   },
   brandTitle: {
     fontSize: 34,

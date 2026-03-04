@@ -26,7 +26,7 @@ const modules = [
     bg: "#FFF7ED",
     children: [
       { title: "Incoming Orders", icon: "receipt-outline" as const, route: "/orders/incoming" },
-      { title: "Customers", icon: "person-outline" as const, route: "/orders/customers" },
+      { title: "Customers", icon: "people-outline" as const, route: "/(app)/orders/customers" },
       { title: "Order History", icon: "time-outline" as const, route: "/orders/history" },
     ],
   },

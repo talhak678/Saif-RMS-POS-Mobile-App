@@ -26,7 +26,7 @@ export interface IReportData {
     salesPerBranch: { branch: string; sales: number; orders: number }[];
   };
   menuCategories: {
-    salesByCategory: { name: string; value: number; color: string }[];
+    salesByCategory: { category: string; value: number; color: string }[];
     topSellingItems: { item: string; sales: number }[];
   };
 }

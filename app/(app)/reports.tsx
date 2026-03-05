@@ -7,6 +7,7 @@ import InventoryTab from "@/src/components/reports/InventoryTab";
 import MenuCategoriesTab from "@/src/components/reports/MenuCategoriesTab";
 import OrdersCustomersTab from "@/src/components/reports/OrdersCustomersTab";
 import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
 import { IReportData } from "@/types/reports.types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -41,12 +42,12 @@ function fmtVal(n: number) {
 }
 
 // ─── Empty State ──────────────────────────────────────────────────────────────
-function EmptyState({ onLoad }: { onLoad: () => void }) {
+function EmptyState({ onLoad, colors }: { onLoad: () => void; colors: any }) {
     return (
         <View style={styles.emptyWrap}>
             <Ionicons name="calendar-outline" size={52} color="#D1D5DB" />
-            <Text style={styles.emptyTitle}>No Report Data</Text>
-            <Text style={styles.emptySubtitle}>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>No Report Data</Text>
+            <Text style={[styles.emptySubtitle, { color: colors.secondary }]}>
                 Select a date range or tap below to load all-time data
             </Text>
             <TouchableOpacity style={styles.loadBtn} onPress={onLoad}>
@@ -58,6 +59,7 @@ function EmptyState({ onLoad }: { onLoad: () => void }) {
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function ReportsDashboard() {
+    const { colors } = useTheme();
     const { user } = useAuth();
     const isSuperAdmin = user?.role?.name === "SUPER_ADMIN";
     const visibleTabs = isSuperAdmin
@@ -190,20 +192,16 @@ export default function ReportsDashboard() {
     };
 
     return (
-        <View style={styles.root}>
-            {/* ── Header ─────────────────────────────────────────── */}
+        <View style={[styles.root, { backgroundColor: colors.background }]}>
+            {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                    <Ionicons name="chevron-back" size={22} color={Colors.light.text} />
+                <TouchableOpacity onPress={() => router.back()} style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <Ionicons name="chevron-back" size={22} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Reports Dashboard</Text>
-                {/* <TouchableOpacity onPress={handleExport} style={styles.exportBtn}>
-                    <Ionicons name="download-outline" size={18} color={Colors.primary} />
-                    <Text style={styles.exportText}>Export</Text>
-                </TouchableOpacity> */}
+                <Text style={[styles.headerTitle, { color: colors.text }]}>Reports Dashboard</Text>
             </View>
 
-            {/* ── Date Filter ────────────────────────────────────── */}
+            {/* Date Filter */}
             <DateRangeFilter
                 startDate={startDate}
                 endDate={endDate}
@@ -212,45 +210,31 @@ export default function ReportsDashboard() {
                 onClear={() => { setStartDate(""); setEndDate(""); }}
             />
 
-            {/* ── Tab Bar ────────────────────────────────────────── */}
-            <View style={styles.tabContainer}>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.tabScroll}
-                >
+            {/* Tab Bar */}
+            <View style={[styles.tabContainer, {}]}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScroll}>
                     {visibleTabs.map((tab, i) => (
-                        <TouchableOpacity
-                            key={tab.key}
-                            style={styles.tab}
-                            onPress={() => handleTabPress(i)}
-                            activeOpacity={0.75}
-                        >
-                            <Text
-                                style={[
-                                    styles.tabText,
-                                    activeTab === i && styles.tabTextActive,
-                                ]}
-                            >
+                        <TouchableOpacity key={tab.key} style={styles.tab} onPress={() => handleTabPress(i)} activeOpacity={0.75}>
+                            <Text style={[styles.tabText, { color: colors.secondary }, activeTab === i && styles.tabTextActive]}>
                                 {tab.label}
                             </Text>
                             {activeTab === i && <View style={styles.tabUnderline} />}
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
-                <View style={styles.tabBorder} />
+                <View style={[styles.tabBorder, { backgroundColor: colors.border }]} />
             </View>
 
-            {/* ── Content ────────────────────────────────────────── */}
+            {/* Content */}
             {loading ? (
                 <View style={styles.loadingWrap}>
                     <ActivityIndicator size="large" color={Colors.primary} />
-                    <Text style={styles.loadingText}>Loading reports…</Text>
+                    <Text style={[styles.loadingText, { color: colors.secondary }]}>Loading reports…</Text>
                 </View>
             ) : error ? (
                 <View style={styles.errorWrap}>
                     <Ionicons name="cloud-offline-outline" size={44} color="#9CA3AF" />
-                    <Text style={styles.errorText}>{error}</Text>
+                    <Text style={[styles.errorText, { color: colors.secondary }]}>{error}</Text>
                     <TouchableOpacity style={styles.retryBtn} onPress={() => fetchReports()}>
                         <Text style={styles.retryText}>Try Again</Text>
                     </TouchableOpacity>
@@ -260,7 +244,7 @@ export default function ReportsDashboard() {
                     {renderTab()}
                 </View>
             ) : (
-                <EmptyState onLoad={() => fetchReports()} />
+                <EmptyState onLoad={() => fetchReports()} colors={colors} />
             )}
         </View>
     );

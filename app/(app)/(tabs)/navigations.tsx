@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/theme";
+import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -26,7 +27,7 @@ const modules = [
     bg: "#FFF7ED",
     children: [
       { title: "Incoming Orders", icon: "receipt-outline" as const, route: "/orders/incoming" },
-      { title: "Customers", icon: "people-outline" as const, route: "/(app)/orders/customers" },
+      { title: "Customers", icon: "people-outline" as const, route: "/orders/customers" },
       { title: "Order History", icon: "time-outline" as const, route: "/orders/history" },
     ],
   },
@@ -70,6 +71,7 @@ const modules = [
 // ─── Screen ───────────────────────────────────────────────────────────────────
 export default function NavigationScreen() {
   const router = useRouter();
+  const { colors, isDark } = useTheme();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
@@ -78,14 +80,14 @@ export default function NavigationScreen() {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.heading}>Modules</Text>
-        <Text style={styles.subHeading}>Select a module to navigate</Text>
+        <Text style={[styles.heading, { color: colors.text }]}>Modules</Text>
+        <Text style={[styles.subHeading, { color: colors.secondary }]}>Select a module to navigate</Text>
       </View>
 
       {/* Module Cards */}
@@ -94,7 +96,7 @@ export default function NavigationScreen() {
         const isOpen = openIndex === index;
 
         return (
-          <View key={index} style={styles.card}>
+          <View key={index} style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {/* Parent Row */}
             <TouchableOpacity
               style={styles.row}
@@ -104,10 +106,10 @@ export default function NavigationScreen() {
               }
             >
               <View style={styles.left}>
-                <View style={[styles.iconWrap, { backgroundColor: mod.bg }]}>
+                <View style={[styles.iconWrap, { backgroundColor: isDark ? mod.color + '20' : mod.bg }]}>
                   <Ionicons name={mod.icon} size={22} color={mod.color} />
                 </View>
-                <Text style={styles.modTitle}>{mod.title}</Text>
+                <Text style={[styles.modTitle, { color: colors.text }]}>{mod.title}</Text>
               </View>
 
               <View style={styles.rightWrap}>
@@ -115,13 +117,13 @@ export default function NavigationScreen() {
                   <Ionicons
                     name={isOpen ? "chevron-up" : "chevron-down"}
                     size={18}
-                    color={Colors.light.secondary}
+                    color={colors.secondary}
                   />
                 ) : (
                   <Ionicons
                     name="chevron-forward"
                     size={18}
-                    color={Colors.light.secondary}
+                    color={colors.secondary}
                   />
                 )}
               </View>
@@ -129,25 +131,25 @@ export default function NavigationScreen() {
 
             {/* Sub-modules */}
             {hasChildren && isOpen && (
-              <View style={styles.children}>
+              <View style={[styles.children, { borderTopColor: colors.border, backgroundColor: isDark ? colors.background : '#FAFBFF' }]}>
                 {mod.children!.map((child, i) => (
                   <TouchableOpacity
                     key={i}
                     style={[
                       styles.childRow,
-                      i < mod.children!.length - 1 && styles.childBorder,
+                      i < mod.children!.length - 1 && [styles.childBorder, { borderBottomColor: colors.border }],
                     ]}
                     onPress={() => router.push(child.route as any)}
                     activeOpacity={0.7}
                   >
-                    <View style={[styles.childIcon, { backgroundColor: mod.bg }]}>
+                    <View style={[styles.childIcon, { backgroundColor: isDark ? mod.color + '20' : mod.bg }]}>
                       <Ionicons name={child.icon} size={16} color={mod.color} />
                     </View>
-                    <Text style={styles.childText}>{child.title}</Text>
+                    <Text style={[styles.childText, { color: colors.text }]}>{child.title}</Text>
                     <Ionicons
                       name="chevron-forward"
                       size={14}
-                      color={Colors.light.secondary}
+                      color={colors.secondary}
                       style={{ marginLeft: "auto" }}
                     />
                   </TouchableOpacity>

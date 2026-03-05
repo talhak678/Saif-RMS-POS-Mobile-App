@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/theme";
+import { useTheme } from "@/src/context/ThemeContext";
 import { DashboardPeriod } from "@/types/dashboard.types";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -16,18 +17,19 @@ interface PeriodSelectorProps {
 }
 
 export default function PeriodSelector({ selected, onSelect }: PeriodSelectorProps) {
+    const { colors, isDark } = useTheme();
     return (
-        <View style={styles.container}>
+        <View style={[s.container, { backgroundColor: isDark ? colors.card : "#F3F4F6", borderColor: colors.border }]}>
             {PERIODS.map((p) => {
                 const active = p.value === selected;
                 return (
                     <TouchableOpacity
                         key={p.value}
-                        style={[styles.chip, active && styles.chipActive]}
+                        style={[s.chip, active && s.chipActive]}
                         onPress={() => onSelect(p.value)}
                         activeOpacity={0.75}
                     >
-                        <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                        <Text style={[s.chipText, { color: active ? "#fff" : colors.secondary }, active && s.chipTextActive]}>
                             {p.label}
                         </Text>
                     </TouchableOpacity>
@@ -37,37 +39,16 @@ export default function PeriodSelector({ selected, onSelect }: PeriodSelectorPro
     );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
     container: {
-        flexDirection: "row",
-        marginHorizontal: 16,
-        marginBottom: 14,
-        backgroundColor: "#F3F4F6",
-        borderRadius: 12,
-        padding: 3,
-        gap: 3,
+        flexDirection: "row", marginHorizontal: 16, marginBottom: 14,
+        borderRadius: 12, padding: 3, gap: 3, borderWidth: 1,
     },
-    chip: {
-        flex: 1,
-        paddingVertical: 7,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: "center",
-    },
+    chip: { flex: 1, paddingVertical: 7, borderRadius: 10, alignItems: "center", justifyContent: "center" },
     chipActive: {
         backgroundColor: Colors.primary,
-        shadowColor: Colors.primary,
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowColor: Colors.primary, shadowOpacity: 0.25, shadowRadius: 4, elevation: 2,
     },
-    chipText: {
-        fontSize: 12,
-        color: "#6B7280",
-        fontWeight: "600",
-    },
-    chipTextActive: {
-        color: "#fff",
-        fontWeight: "700",
-    },
+    chipText: { fontSize: 12, fontWeight: "600" },
+    chipTextActive: { color: "#fff", fontWeight: "700" },
 });

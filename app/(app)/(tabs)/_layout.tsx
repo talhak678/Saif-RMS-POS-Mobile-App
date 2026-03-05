@@ -1,10 +1,11 @@
 import { Colors } from "@/constants/theme";
+import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-// ─── Custom Tab Bar ───────────────────────────────────────────────────────────
+// ─── Tab Config ───────────────────────────────────────────────────────────────
 
 type TabItem = {
   name: string;
@@ -19,16 +20,29 @@ const TABS: TabItem[] = [
   { name: "profile", label: "Profile", icon: "person-outline", iconFocused: "person" },
 ];
 
+// ─── Custom Tab Bar ───────────────────────────────────────────────────────────
+
 function CustomTabBar({ state, descriptors, navigation }: any) {
+  const { colors, isDark } = useTheme();
+
   return (
     <View style={styles.tabBarContainer}>
-      <View style={styles.tabBar}>
+      <View style={[
+        styles.tabBar,
+        {
+          backgroundColor: colors.card,
+          shadowColor: isDark ? '#000' : '#000',
+          shadowOpacity: isDark ? 0.4 : 0.12,
+          borderColor: isDark ? colors.border : 'transparent',
+          borderWidth: isDark ? 1 : 0,
+        },
+      ]}>
         {state.routes.map((route: any, index: number) => {
           const tab = TABS.find((t) => t.name === route.name);
           if (!tab) return null;
 
           const isFocused = state.index === index;
-          const color = isFocused ? Colors.primary : "#94A3B8";
+          const iconColor = isFocused ? Colors.primary : colors.tabIconDefault;
 
           const onPress = () => {
             const event = navigation.emit({
@@ -48,7 +62,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               activeOpacity={0.8}
               style={styles.tabItem}
             >
-              {/* Active pill background */}
+              {/* Active top accent */}
               {isFocused && <View style={styles.activePill} />}
 
               {/* Icon */}
@@ -56,12 +70,16 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 <Ionicons
                   name={isFocused ? tab.iconFocused : tab.icon}
                   size={22}
-                  color={color}
+                  color={iconColor}
                 />
               </View>
 
               {/* Label */}
-              <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
+              <Text style={[
+                styles.tabLabel,
+                { color: isFocused ? Colors.primary : colors.secondary },
+                isFocused && styles.tabLabelActive,
+              ]}>
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -104,20 +122,15 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: "row",
-    backgroundColor: "#fff",
     borderRadius: 24,
     height: 68,
     alignItems: "center",
     justifyContent: "space-around",
     paddingHorizontal: 8,
-    // Shadow
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 6 },
     elevation: 14,
   },
-
   tabItem: {
     flex: 1,
     alignItems: "center",
@@ -126,7 +139,6 @@ const styles = StyleSheet.create({
     position: "relative",
     height: 68,
   },
-
   activePill: {
     position: "absolute",
     top: 0,
@@ -137,7 +149,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
     backgroundColor: Colors.primary,
   },
-
   iconWrap: {
     width: 40,
     height: 40,
@@ -148,15 +159,12 @@ const styles = StyleSheet.create({
   iconWrapActive: {
     backgroundColor: Colors.primary + "18",
   },
-
   tabLabel: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#94A3B8",
     letterSpacing: 0.2,
   },
   tabLabelActive: {
-    color: Colors.primary,
     fontWeight: "700",
   },
 });

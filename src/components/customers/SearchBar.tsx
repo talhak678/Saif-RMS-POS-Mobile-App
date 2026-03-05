@@ -1,59 +1,36 @@
+import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
-interface SearchBarProps {
-    value: string;
-    onChangeText: (text: string) => void;
-    placeholder: string;
-}
+interface SearchBarProps { value: string; onChangeText: (text: string) => void; placeholder: string; }
 
 export default function SearchBar({ value, onChangeText, placeholder }: SearchBarProps) {
+    const { colors } = useTheme();
     return (
-        <View style={styles.wrapper}>
-            <Ionicons name="search-outline" size={16} color="#9CA3AF" style={styles.icon} />
+        <View style={[s.wrapper, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Ionicons name="search-outline" size={16} color={colors.secondary} style={s.icon} />
             <TextInput
-                style={styles.input}
+                style={[s.input, { color: colors.text }]}
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.secondary}
                 autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="search"
             />
             {value.length > 0 && (
                 <TouchableOpacity onPress={() => onChangeText("")} hitSlop={8}>
-                    <Ionicons name="close-circle" size={16} color="#9CA3AF" />
+                    <Ionicons name="close-circle" size={16} color={colors.secondary} />
                 </TouchableOpacity>
             )}
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    wrapper: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#F9FAFB",
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#E5E7EB",
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        marginBottom: 8,
-        gap: 8,
-    },
+const s = StyleSheet.create({
+    wrapper: { flexDirection: "row", alignItems: "center", borderRadius: 12, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 8, gap: 8 },
     icon: { flexShrink: 0 },
-    input: {
-        flex: 1,
-        fontSize: 14,
-        color: "#111827",
-        paddingVertical: 0,
-    },
+    input: { flex: 1, fontSize: 14, paddingVertical: 0 },
 });

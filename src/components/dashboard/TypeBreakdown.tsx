@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { useTheme } from "@/src/context/ThemeContext";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -8,22 +8,19 @@ const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string }> 
     PICKUP: { label: "Pickup", color: "#0891b2", bg: "#ECFEFF" },
 };
 
-interface TypeBreakdownProps {
-    typeBreakdown: Record<string, number>;
-}
-
-export default function TypeBreakdown({ typeBreakdown }: TypeBreakdownProps) {
+export default function TypeBreakdown({ typeBreakdown }: { typeBreakdown: Record<string, number> }) {
+    const { colors, isDark } = useTheme();
     const entries = Object.entries(typeBreakdown);
     return (
-        <View style={styles.card}>
-            <Text style={styles.title}>🍽️ Order Types</Text>
-            <View style={styles.row}>
+        <View style={[s.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[s.title, { color: colors.text }]}>Order Types</Text>
+            <View style={s.row}>
                 {entries.map(([key, count]) => {
                     const cfg = TYPE_CONFIG[key] || { label: key, color: "#9CA3AF", bg: "#F9FAFB" };
                     return (
-                        <View key={key} style={[styles.item, { backgroundColor: cfg.bg }]}>
-                            <Text style={[styles.itemCount, { color: cfg.color }]}>{count}</Text>
-                            <Text style={[styles.itemLabel, { color: cfg.color }]}>{cfg.label}</Text>
+                        <View key={key} style={[s.item, { backgroundColor: isDark ? cfg.color + "20" : cfg.bg }]}>
+                            <Text style={[s.count, { color: cfg.color }]}>{count}</Text>
+                            <Text style={[s.label, { color: cfg.color }]}>{cfg.label}</Text>
                         </View>
                     );
                 })}
@@ -32,27 +29,11 @@ export default function TypeBreakdown({ typeBreakdown }: TypeBreakdownProps) {
     );
 }
 
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: Colors.light.card,
-        borderRadius: 18,
-        padding: 16,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: Colors.light.border,
-        shadowColor: "#000",
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    title: { fontSize: 15, fontWeight: "700", color: Colors.light.text, marginBottom: 14 },
+const s = StyleSheet.create({
+    card: { borderRadius: 18, padding: 16, marginBottom: 16, borderWidth: 1, shadowColor: "#000", shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+    title: { fontSize: 15, fontWeight: "700", marginBottom: 14 },
     row: { flexDirection: "row", gap: 10 },
-    item: {
-        flex: 1,
-        borderRadius: 14,
-        paddingVertical: 16,
-        alignItems: "center",
-    },
-    itemCount: { fontSize: 22, fontWeight: "800", marginBottom: 4 },
-    itemLabel: { fontSize: 12, fontWeight: "600" },
+    item: { flex: 1, borderRadius: 14, paddingVertical: 16, alignItems: "center" },
+    count: { fontSize: 22, fontWeight: "800", marginBottom: 4 },
+    label: { fontSize: 12, fontWeight: "600" },
 });

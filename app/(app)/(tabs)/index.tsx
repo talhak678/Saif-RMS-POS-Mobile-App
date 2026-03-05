@@ -10,6 +10,7 @@ import TopItemsList from "@/src/components/dashboard/TopItemsList";
 import TrendChart from "@/src/components/dashboard/TrendChart";
 import TypeBreakdown from "@/src/components/dashboard/TypeBreakdown";
 import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
 import { DashboardPeriod, IDashboardData } from "@/types/dashboard.types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -84,6 +85,7 @@ function SuperAdminPlaceholder() {
 
 export default function DashboardScreen() {
   const { user } = useAuth();
+  const { colors, isDark } = useTheme();
   const [data, setData] = useState<IDashboardData | null>(null);
   const [period, setPeriod] = useState<DashboardPeriod>("30d");
   const [loading, setLoading] = useState(true);
@@ -131,9 +133,9 @@ export default function DashboardScreen() {
     : "?";
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       {/* ── Fixed Header ──────────────────────────────────── */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <View style={styles.headerLeft}>
           <Image
             source={require("../../../assets/images/icon.png")}
@@ -141,13 +143,13 @@ export default function DashboardScreen() {
             resizeMode="contain"
           />
           <View>
-            <Text style={styles.headerTitle}>PlatterOS</Text>
-            <Text style={styles.headerDate}>{todayLabel()}</Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>PlatterOS</Text>
+            <Text style={[styles.headerDate, { color: colors.secondary }]}>{todayLabel()}</Text>
           </View>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconBtn}>
-            <Ionicons name="notifications-outline" size={22} color={Colors.light.text} />
+          <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.background }]}>
+            <Ionicons name="notifications-outline" size={22} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.avatarBtn}
@@ -174,7 +176,7 @@ export default function DashboardScreen() {
         </View>
       ) : data ? (
         <ScrollView
-          style={styles.scroll}
+          style={[styles.scroll, { backgroundColor: colors.background }]}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -290,7 +292,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: Colors.light.background,
-    paddingTop: 48,
+    paddingTop: 42,
   },
 
   // Header
@@ -299,7 +301,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingBottom: 10,
+    paddingTop: 10,
+    marginBottom: 10,
   },
   headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
   logoImg: {

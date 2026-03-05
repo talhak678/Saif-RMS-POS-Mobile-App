@@ -1,34 +1,33 @@
 import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getMeApi } from "@/src/api/authApi";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
+import { ThemeProvider, useTheme } from "@/src/context/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from "@react-navigation/native";
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 
-// ─── Inner App — has access to AuthContext ────────────────────────────────────
-function AppContent({ theme }: { theme: typeof DefaultTheme | typeof DarkTheme }) {
+// ─── Inner content: reads auth + app theme ─────────────────────────────────
+
+function AppContent() {
   const { loading, saveSession } = useAuth();
+  const { isDark, colors } = useTheme();
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    // Wait until AuthContext has finished reading AsyncStorage
     if (loading) return;
     checkAuth();
   }, [loading]);
 
   const checkAuth = async () => {
     const storedToken = await AsyncStorage.getItem("auth_token");
-
     if (!storedToken) {
       router.replace("/(auth)/sign-in");
       setAuthChecked(true);
       return;
     }
-
     try {
       const res = await getMeApi();
       if (res.data?.success && res.data?.data) {
@@ -44,90 +43,82 @@ function AppContent({ theme }: { theme: typeof DefaultTheme | typeof DarkTheme }
     }
   };
 
+  // Build navigation theme from current app theme
+  const navTheme = isDark
+    ? {
+      ...DarkTheme,
+      colors: {
+        ...DarkTheme.colors,
+        primary: Colors.primary,
+        background: colors.background,
+        card: colors.card,
+        text: colors.text,
+        border: colors.border,
+        notification: Colors.primary,
+      },
+    }
+    : {
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        primary: Colors.primary,
+        background: colors.background,
+        card: colors.card,
+        text: colors.text,
+        border: colors.border,
+        notification: Colors.primary,
+      },
+    };
+
   return (
-    <ThemeProvider value={theme}>
-      {/* Stack is ALWAYS mounted so router.replace() works */}
+    <NavThemeProvider value={navTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(app)" />
         <Stack.Screen name="edit-profile" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={isDark ? "light" : "dark"} />
 
-      {/* Overlay loader sits on top until auth check is done */}
+      {/* Splash overlay while auth check runs */}
       {(loading || !authChecked) && (
-        <View style={splashStyles.overlay}>
+        <View style={[splashStyles.overlay, { backgroundColor: colors.background }]}>
           <Image
             source={require("../assets/images/icon.png")}
             style={splashStyles.logo}
             resizeMode="contain"
           />
-          <ActivityIndicator
-            size="large"
-            color={Colors.primary}
-            style={{ marginTop: 24 }}
-          />
-          <Text style={splashStyles.text}>Loading…</Text>
+          <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 24 }} />
+          <Text style={[splashStyles.text, { color: colors.secondary }]}>Loading…</Text>
         </View>
       )}
-    </ThemeProvider>
+    </NavThemeProvider>
   );
 }
 
 // ─── Root Layout ──────────────────────────────────────────────────────────────
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
-  const theme =
-    colorScheme === "dark"
-      ? {
-        ...DarkTheme,
-        colors: {
-          ...DarkTheme.colors,
-          primary: Colors.primary,
-          background: Colors.dark.background,
-          card: Colors.dark.card,
-          text: Colors.dark.text,
-          border: Colors.dark.border,
-          notification: Colors.primary,
-        },
-      }
-      : {
-        ...DefaultTheme,
-        colors: {
-          ...DefaultTheme.colors,
-          primary: Colors.primary,
-          background: Colors.light.background,
-          card: Colors.light.card,
-          text: Colors.light.text,
-          border: Colors.light.border,
-          notification: Colors.primary,
-        },
-      };
-
   return (
     <AuthProvider>
-      <AppContent theme={theme} />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
+
 const splashStyles = StyleSheet.create({
   overlay: {
-    ...StyleSheet.absoluteFillObject, // covers the entire screen
-    backgroundColor: "#fff",
+    ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 999,
   },
-  logo: {
-    width: 120,
-    height: 120,
-  },
+  logo: { width: 120, height: 120 },
   text: {
     fontSize: 13,
-    color: "#94A3B8",
     fontWeight: "600",
     marginTop: 12,
     letterSpacing: 0.4,

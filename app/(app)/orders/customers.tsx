@@ -5,6 +5,7 @@ import CustomerRow from "@/src/components/customers/CustomerRow";
 import SearchBar from "@/src/components/customers/SearchBar";
 import SegmentCard from "@/src/components/customers/SegmentCard";
 import StatCard from "@/src/components/customers/StatCard";
+import { useTheme } from "@/src/context/ThemeContext";
 import {
     ICustomer,
     ICustomerStats,
@@ -28,6 +29,7 @@ import {
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function CustomersScreen() {
+    const { colors, isDark } = useTheme();
     const [customers, setCustomers] = useState<ICustomer[]>([]);
     const [stats, setStats] = useState<ICustomerStats | null>(null);
     const [loadingCustomers, setLoadingCustomers] = useState(true);
@@ -105,13 +107,13 @@ export default function CustomersScreen() {
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <View style={styles.root}>
+        <View style={[styles.root, { backgroundColor: colors.background }]}>
             {/* ── Header ──────────────────────────────────────────────────────── */}
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                    <Ionicons name="chevron-back" size={22} color={Colors.light.text} />
+            <View style={[styles.header, { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
+                <TouchableOpacity onPress={() => router.back()} style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <Ionicons name="chevron-back" size={22} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Customer Management</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>Customer Management</Text>
                 <TouchableOpacity
                     onPress={onRefresh}
                     style={styles.refreshBtn}
@@ -128,7 +130,7 @@ export default function CustomersScreen() {
             {isLoading && !refreshing ? (
                 <View style={styles.loadingWrap}>
                     <ActivityIndicator size="large" color={Colors.primary} />
-                    <Text style={styles.loadingText}>Loading customers…</Text>
+                    <Text style={[styles.loadingText, { color: colors.secondary }]}>Loading customers…</Text>
                 </View>
             ) : (
                 <FlatList
@@ -148,21 +150,21 @@ export default function CustomersScreen() {
                     ListHeaderComponent={
                         <View>
                             {/* Summary Stats — 2×2 grid */}
-                            <Text style={styles.sectionLabel}>Overview</Text>
+                            <Text style={[styles.sectionLabel, { color: colors.secondary }]}>Overview</Text>
                             <View style={styles.grid2}>
                                 <StatCard
                                     label="Total Customers"
                                     value={String(stats?.summary.totalCustomers ?? "—")}
                                     icon="people-outline"
                                     iconColor="#5d69b9"
-                                    iconBg="#eef0fb"
+                                    iconBg={isDark ? "#5d69b920" : "#eef0fb"}
                                 />
                                 <StatCard
                                     label="Repeat Rate"
                                     value={stats?.summary.repeatRate ?? "—"}
                                     icon="refresh-outline"
                                     iconColor="#059669"
-                                    iconBg="#d1fae5"
+                                    iconBg={isDark ? "#05966920" : "#d1fae5"}
                                 />
                             </View>
                             <View style={[styles.grid2, { marginBottom: 20 }]}>
@@ -171,19 +173,19 @@ export default function CustomersScreen() {
                                     value={stats ? `$ ${stats.summary.averageOrderValue}` : "—"}
                                     icon="wallet-outline"
                                     iconColor="#d97706"
-                                    iconBg="#fef3c7"
+                                    iconBg={isDark ? "#d9770620" : "#fef3c7"}
                                 />
                                 <StatCard
                                     label="Retention Rate"
                                     value={stats?.summary.retentionRate ?? "—"}
                                     icon="trending-up-outline"
                                     iconColor="#2563eb"
-                                    iconBg="#eff6ff"
+                                    iconBg={isDark ? "#2563eb20" : "#eff6ff"}
                                 />
                             </View>
 
                             {/* Smart Segments — 2-column, 4 rows */}
-                            <Text style={styles.sectionLabel}>Smart Segments</Text>
+                            <Text style={[styles.sectionLabel, { color: colors.secondary }]}>Smart Segments</Text>
                             {SEGMENT_CONFIG.reduce<(typeof SEGMENT_CONFIG[number])[][]>((acc, seg, i) => {
                                 if (i % 2 === 0) acc.push([]);
                                 acc[acc.length - 1].push(seg);
@@ -222,7 +224,7 @@ export default function CustomersScreen() {
                             )}
 
                             {/* Search Bars */}
-                            <Text style={styles.sectionLabel}>Search Customers</Text>
+                            <Text style={[styles.sectionLabel, { color: colors.secondary }]}>Search Customers</Text>
                             <SearchBar
                                 value={searchName}
                                 onChangeText={setSearchName}
@@ -241,14 +243,14 @@ export default function CustomersScreen() {
                             <View style={{ marginBottom: 8 }} />
 
                             {/* Customer list label */}
-                            <Text style={styles.sectionLabel}>Customers</Text>
+                            <Text style={[styles.sectionLabel, { color: colors.secondary }]}>Customers</Text>
                         </View>
                     }
                     // ── Empty State ──────────────────────────────────────────────────
                     ListEmptyComponent={
                         <View style={styles.emptyWrap}>
                             <Ionicons name="people-outline" size={52} color="#D1D5DB" />
-                            <Text style={styles.emptyTitle}>
+                            <Text style={[styles.emptyTitle, { color: colors.secondary }]}>
                                 {activeSegment
                                     ? `No customers in "${activeSegmentConfig?.label ?? activeSegment}" segment`
                                     : "No customers found"}
@@ -258,7 +260,7 @@ export default function CustomersScreen() {
                     // ── Footer ───────────────────────────────────────────────────────
                     ListFooterComponent={
                         <View>
-                            <Text style={styles.footerText}>
+                            <Text style={[styles.footerText, { color: colors.secondary }]}>
                                 Showing {filtered.length} of {customers.length} customers
                                 {activeSegment && activeSegmentConfig
                                     ? `  ·  Segment: ${activeSegmentConfig.label}`

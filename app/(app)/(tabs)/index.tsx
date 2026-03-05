@@ -26,14 +26,17 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function fmt(n: number): string {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(1)}K`;
-  return `$${n.toLocaleString()}`;
+function fmt(n: number | null | undefined): string {
+  const safe = Number(n ?? 0);
+  if (safe >= 1_000_000) return `Rs.${(safe / 1_000_000).toFixed(2)}M`;
+  if (safe >= 1_000) return `Rs.${(safe / 1_000).toFixed(2)}K`;
+  return `Rs.${safe.toFixed(2)}`;
 }
 
-function fmtNum(n: number): string {
-  return n.toLocaleString();
+function fmtNum(n: number | null | undefined): string {
+  const safe = Number(n ?? 0);
+  const rounded = Math.round(safe * 100) / 100;
+  return Number.isInteger(rounded) ? rounded.toLocaleString() : rounded.toFixed(2);
 }
 
 function todayLabel(): string {

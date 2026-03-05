@@ -20,12 +20,12 @@ function GrowthBadge({ growth, isDark }: { growth?: number | null; isDark: boole
     if (growth > 0)
         return (
             <View style={[s.badge, { backgroundColor: isDark ? "#052e16" : "#DCFCE7" }]}>
-                <Text style={{ fontSize: 11, color: "#16a34a", fontWeight: "700" }}>↑ {growth.toFixed(1)}%</Text>
+                <Text style={{ fontSize: 11, color: "#16a34a", fontWeight: "700" }}>↑ {Number(growth.toFixed(2))}%</Text>
             </View>
         );
     return (
         <View style={[s.badge, { backgroundColor: isDark ? "#3b1212" : "#FEE2E2" }]}>
-            <Text style={{ fontSize: 11, color: "#dc2626", fontWeight: "700" }}>↓ {Math.abs(growth).toFixed(1)}%</Text>
+            <Text style={{ fontSize: 11, color: "#dc2626", fontWeight: "700" }}>↓ {Number(Math.abs(growth).toFixed(2))}%</Text>
         </View>
     );
 }

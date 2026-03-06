@@ -239,7 +239,7 @@ export default function ItemDetailScreen() {
                             multiline numberOfLines={3}
                             onFocus={() => setFocusedField("desc")} onBlur={() => setFocusedField(null)} />
 
-                        <Text style={[s.label, { color: C.text[scheme], marginTop: 14 }]}>Price (Rs.) *</Text>
+                        <Text style={[s.label, { color: C.text[scheme], marginTop: 14 }]}>Price ($) *</Text>
                         <TextInput style={inputStyle("price")} value={form.price}
                             onChangeText={v => setForm(f => ({ ...f, price: v }))}
                             placeholder="850" placeholderTextColor={C.secondary[scheme]}

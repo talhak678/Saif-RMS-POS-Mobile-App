@@ -23,6 +23,33 @@ const SUB_MODULES = [
         darkBg: "#2a1a0a",
         route: "/menu/items",
     },
+    {
+        title: "Ingredients",
+        desc: "Manage raw materials and inventory",
+        icon: "nutrition-outline" as const,
+        color: "#10b981",
+        bg: "#ECFDF5",
+        darkBg: "#064e3b",
+        route: "/menu/ingredients",
+    },
+    {
+        title: "Stock Management",
+        desc: "Track stock levels across branches",
+        icon: "archive-outline" as const,
+        color: "#0891b2",
+        bg: "#ECFEFF",
+        darkBg: "#083344",
+        route: "/menu/stock",
+    },
+    {
+        title: "Recipes",
+        desc: "Define ingredient use for menu items",
+        icon: "flask-outline" as const,
+        color: "#6366f1",
+        bg: "#EEF2FF",
+        darkBg: "#1e1b4b",
+        route: "/menu/recipes",
+    },
 ];
 
 export default function MenuHubScreen() {

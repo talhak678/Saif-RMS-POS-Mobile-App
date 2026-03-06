@@ -54,9 +54,9 @@ const modules = [
     color: "#0891b2",
     bg: "#ECFEFF",
     children: [
-      { title: "Inventory", icon: "cube-outline" as const, route: "/inventory" },
-      { title: "Recipes", icon: "flask-outline" as const, route: "/inventory/recipes" },
-      { title: "Stock", icon: "archive-outline" as const, route: "/inventory/stock" },
+      { title: "Ingredients", icon: "cube-outline" as const, route: "/menu/ingredients" },
+      { title: "Recipes", icon: "flask-outline" as const, route: "/menu/recipes" },
+      { title: "Stock", icon: "archive-outline" as const, route: "/menu/stock" },
     ],
   },
   {

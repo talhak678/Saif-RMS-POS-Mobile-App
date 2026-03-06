@@ -5,8 +5,11 @@ export default function MenuLayout() {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
             <Stack.Screen name="categories" />
-            <Stack.Screen name="items/index" options={{ headerShown: false }} />
-            <Stack.Screen name="items/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="items/index" />
+            <Stack.Screen name="items/[id]" />
+            <Stack.Screen name="ingredients" />
+            <Stack.Screen name="stock" />
+            <Stack.Screen name="recipes" />
         </Stack>
     );
 }

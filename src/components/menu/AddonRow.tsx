@@ -24,7 +24,7 @@ export default function AddonRow({ addon, index, onChange, onRemove }: Props) {
                 placeholderTextColor={colors.secondary}
             />
             <View style={[s.priceWrap, { backgroundColor: inputBg, borderColor: colors.border }]}>
-                <Text style={[s.currencySign, { color: colors.secondary }]}>Rs.</Text>
+                <Text style={[s.currencySign, { color: colors.secondary }]}>$</Text>
                 <TextInput
                     style={[s.priceInput, { color: colors.text }]}
                     value={String(addon.price || "")}

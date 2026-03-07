@@ -1,8 +1,9 @@
 import { Colors } from "@/constants/theme";
+import apiClient from "@/src/api/apiClient";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -73,6 +74,24 @@ export default function NavigationScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await apiClient.get("/notifications");
+      const list = res.data?.data || res.data || [];
+      const unread = list.filter((n: any) => !n.isRead).length;
+      setUnreadCount(unread);
+    } catch (err) {
+      console.warn("Failed to fetch unread count");
+    }
+  };
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -86,8 +105,23 @@ export default function NavigationScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.heading, { color: colors.text }]}>Modules</Text>
-        <Text style={[styles.subHeading, { color: colors.secondary }]}>Select a module to navigate</Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={[styles.heading, { color: colors.text }]}>Modules</Text>
+            <Text style={[styles.subHeading, { color: colors.secondary }]}>Select a module to navigate</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => router.push("/(app)/notifications" as any)}
+            style={[styles.notifBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+          >
+            <Ionicons name="notifications-outline" size={22} color={colors.text} />
+            {unreadCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unreadCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Module Cards */}
@@ -179,6 +213,31 @@ const styles = StyleSheet.create({
 
   // Header
   header: { marginBottom: 20 },
+  headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  notifBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#ef4444",
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  badgeText: { color: "#fff", fontSize: 9, fontWeight: "900" },
   heading: {
     fontSize: 26,
     fontWeight: "800",

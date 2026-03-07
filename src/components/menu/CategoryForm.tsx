@@ -1,7 +1,9 @@
 import { Colors } from "@/constants/theme";
 import { useTheme } from "@/src/context/ThemeContext";
+import { uploadToCloudinary } from '@/src/utils/cloudinary';
 import { ICategoryForm } from "@/types/category.types";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -104,22 +106,40 @@ export default function CategoryForm({ initial, onSubmit, onClose, title, submit
                     numberOfLines={3}
                 />
 
-                {/* Image URL */}
-                <Text style={[s.label, { color: colors.text, marginTop: 14 }]}>Image URL <Text style={{ color: colors.secondary }}>(optional)</Text></Text>
-                <TextInput
-                    style={inputStyle("img")}
-                    value={form.image}
-                    onChangeText={v => setForm(f => ({ ...f, image: v }))}
-                    placeholder="https://cdn.example.com/image.jpg"
-                    placeholderTextColor={colors.secondary}
-                    onFocus={() => setFocusedField("img")}
-                    onBlur={() => setFocusedField(null)}
-                    autoCapitalize="none"
-                    keyboardType="url"
-                />
-                {form.image.startsWith("http") && (
-                    <Image source={{ uri: form.image }} style={s.preview} resizeMode="cover" />
-                )}
+                {/* Image Picker */}
+                <Text style={[s.label, { color: colors.text, marginTop: 14 }]}>Category Image <Text style={{ color: colors.secondary }}>(optional)</Text></Text>
+                <TouchableOpacity
+                    style={[s.pickerBtn, { backgroundColor: isDark ? "#374151" : "#f3f4f6", borderColor: colors.border }]}
+                    onPress={async () => {
+                        const result = await ImagePicker.launchImageLibraryAsync({
+                            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                            allowsEditing: true,
+                            aspect: [16, 9],
+                            quality: 0.8,
+                        });
+
+                        if (!result.canceled) {
+                            setLoading(true);
+                            try {
+                                const url = await uploadToCloudinary(result.assets[0].uri);
+                                setForm(f => ({ ...f, image: url }));
+                            } catch (err) {
+                                setError("Failed to upload image");
+                            } finally {
+                                setLoading(false);
+                            }
+                        }
+                    }}
+                >
+                    {form.image ? (
+                        <Image source={{ uri: form.image }} style={s.preview} />
+                    ) : (
+                        <View style={s.pickerContent}>
+                            <Ionicons name="image-outline" size={24} color={colors.secondary} />
+                            <Text style={[s.pickerText, { color: colors.secondary }]}>Select Image</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
 
                 {/* Submit */}
                 <TouchableOpacity
@@ -148,7 +168,10 @@ const s = StyleSheet.create({
     input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 11, fontSize: 14 },
     errorRow: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 5 },
     errorText: { fontSize: 12, color: "#ef4444", fontWeight: "600" },
-    preview: { width: "100%", height: 140, borderRadius: 12, marginTop: 10 },
+    preview: { width: "100%", height: 160, borderRadius: 12 },
+    pickerBtn: { height: 160, borderRadius: 12, borderWidth: 1, borderStyle: 'dashed', overflow: 'hidden', justifyContent: 'center', alignItems: 'center' },
+    pickerContent: { alignItems: 'center' },
+    pickerText: { fontSize: 13, fontWeight: '600', marginTop: 8 },
     submitBtn: { borderRadius: 14, paddingVertical: 14, alignItems: "center", marginTop: 24 },
     submitText: { fontSize: 15, fontWeight: "800", color: "#fff" },
 });

@@ -10,11 +10,11 @@ import TopItemsList from "@/src/components/dashboard/TopItemsList";
 import TrendChart from "@/src/components/dashboard/TrendChart";
 import TypeBreakdown from "@/src/components/dashboard/TypeBreakdown";
 import { useAuth } from "@/src/context/AuthContext";
+import { useDashboard } from "@/src/context/DashboardContext";
 import { useTheme } from "@/src/context/ThemeContext";
-import { DashboardPeriod, IDashboardData } from "@/types/dashboard.types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image, RefreshControl,
   ScrollView,
@@ -89,40 +89,46 @@ function SuperAdminPlaceholder() {
 export default function DashboardScreen() {
   const { user } = useAuth();
   const { colors, isDark } = useTheme();
-  const [data, setData] = useState<IDashboardData | null>(null);
-  const [period, setPeriod] = useState<DashboardPeriod>("30d");
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data,
+    loading,
+    refreshing,
+    error,
+    period,
+    setPeriod,
+    fetchDashboard
+  } = useDashboard();
 
-  const fetchDashboard = useCallback(
-    async (showLoader = true) => {
-      if (showLoader) setLoading(true);
-      setError(null);
-      try {
-        const res = await apiClient.get(`/dashboard?period=${period}`);
-        if (res.data?.success) {
-          setData(res.data.data);
-        } else {
-          setError("Failed to load dashboard");
-        }
-      } catch (err: any) {
-        setError(err?.response?.data?.message || "Network error. Try again.");
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [period]
-  );
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    fetchDashboard();
-  }, [fetchDashboard]);
+    // Only fetch if we don't have data yet
+    if (!data) {
+      fetchDashboard();
+    }
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000);
+    return () => clearInterval(interval);
+  }, [fetchDashboard, data]);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await apiClient.get("/notifications");
+      const list = res.data?.data || res.data || [];
+      const unread = list.filter((n: any) => !n.isRead).length;
+      setUnreadCount(unread);
+    } catch (err) {
+      console.warn("Failed to fetch unread count");
+    }
+  };
+
+  const handleManualReload = () => {
+    fetchDashboard(true); // force full loading state
+    fetchUnreadCount();
+  };
 
   const onRefresh = () => {
-    setRefreshing(true);
-    fetchDashboard(false);
+    fetchDashboard(false); // background refresh (refresh control)
   };
 
   // ── Super Admin Check
@@ -151,8 +157,22 @@ export default function DashboardScreen() {
           </View>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.background }]}>
-            <Ionicons name="notifications-outline" size={22} color={colors.text} />
+          <TouchableOpacity
+            onPress={() => router.push("/(app)/notifications" as any)}
+            style={[styles.iconBtn, { backgroundColor: colors.background }]}
+          >
+            <Ionicons name="notifications-outline" size={20} color={colors.text} />
+            {unreadCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unreadCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleManualReload}
+            style={[styles.iconBtn, { backgroundColor: colors.background }]}
+          >
+            <Ionicons name="reload-outline" size={20} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.avatarBtn}
@@ -334,6 +354,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: Colors.light.border,
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#ef4444",
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 9,
+    fontWeight: "900",
   },
   avatarBtn: {
     width: 38,

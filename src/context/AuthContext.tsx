@@ -20,6 +20,13 @@ export interface UserRestaurant {
   id: string;
   name: string;
   slug?: string;
+  logo?: string;
+  description?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  subscription?: string;
+  subEndDate?: string;
 }
 
 export interface User {
@@ -70,10 +77,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Save token + user to state and AsyncStorage
   const saveSession = async (newToken: string, newUser: User) => {
-    setTokenState(newToken);
-    setUserState(newUser);
+    if (!newToken || !newUser) {
+      console.error("saveSession called with missing data:", { newToken: !!newToken, newUser: !!newUser });
+      return;
+    }
+
+    // 1. Must save to storage FIRST so interceptors/checkAuth can find it
     await AsyncStorage.setItem("auth_token", newToken);
     await AsyncStorage.setItem("user_data", JSON.stringify(newUser));
+
+    // 2. Then update state to trigger re-renders
+    setTokenState(newToken);
+    setUserState(newUser);
   };
 
   // Update just the user object

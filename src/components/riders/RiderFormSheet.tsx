@@ -87,7 +87,7 @@ export default function RiderFormSheet({ initial, title, submitLabel, onClose, o
                                 setForm({ ...form, phone: v });
                                 setErrors({ ...errors, phone: undefined });
                             }}
-                            placeholder="03111234567"
+                            placeholder="+1 156 4582 42"
                             placeholderTextColor={C.secondary[scheme]}
                             keyboardType="phone-pad"
                         />

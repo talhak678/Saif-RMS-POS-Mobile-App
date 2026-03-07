@@ -3,10 +3,12 @@ import AddonRow from "@/src/components/menu/AddonRow";
 import CategoryPicker from "@/src/components/menu/CategoryPicker";
 import VariationRow from "@/src/components/menu/VariationRow";
 import { useTheme } from "@/src/context/ThemeContext";
+import { uploadToCloudinary } from '@/src/utils/cloudinary';
 import { C } from "@/theme/colors";
 import { ICategory } from "@/types/category.types";
 import { IAddon, IMenuItem, IMenuItemForm, IVariation } from "@/types/menuitem.types";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -211,14 +213,43 @@ export default function ItemDetailScreen() {
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
                 <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
-                    {/* Hero image preview */}
-                    {form.image && form.image.startsWith("http") ? (
-                        <Image source={{ uri: form.image }} style={s.heroImage} resizeMode="cover" />
-                    ) : (
-                        <View style={[s.heroImagePlaceholder, { backgroundColor: C.inputBg[scheme] }]}>
-                            <Ionicons name="image-outline" size={48} color={C.secondary[scheme]} />
+                    {/* Hero image preview with Picker */}
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={async () => {
+                            const result = await ImagePicker.launchImageLibraryAsync({
+                                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                                allowsEditing: true,
+                                aspect: [4, 3],
+                                quality: 0.8,
+                            });
+
+                            if (!result.canceled) {
+                                setSaving(true);
+                                try {
+                                    const url = await uploadToCloudinary(result.assets[0].uri);
+                                    setForm(f => ({ ...f, image: url }));
+                                } catch (err) {
+                                    Alert.alert("Error", "Failed to upload image");
+                                } finally {
+                                    setSaving(false);
+                                }
+                            }
+                        }}
+                        style={s.heroContainer}
+                    >
+                        {form.image && form.image.startsWith("http") ? (
+                            <Image source={{ uri: form.image }} style={s.heroImage} resizeMode="cover" />
+                        ) : (
+                            <View style={[s.heroImagePlaceholder, { backgroundColor: C.inputBg[scheme] }]}>
+                                <Ionicons name="image-outline" size={48} color={C.secondary[scheme]} />
+                                <Text style={{ color: C.secondary[scheme], marginTop: 8, fontWeight: '600' }}>Add Item Image</Text>
+                            </View>
+                        )}
+                        <View style={[s.editImgBadge, { backgroundColor: C.primary[scheme] }]}>
+                            <Ionicons name="camera" size={20} color="#fff" />
                         </View>
-                    )}
+                    </TouchableOpacity>
 
                     <View style={s.body}>
                         {/* Basic Info Section */}
@@ -247,12 +278,7 @@ export default function ItemDetailScreen() {
                             onFocus={() => setFocusedField("price")} onBlur={() => setFocusedField(null)} />
                         {errors.price ? <Text style={s.errorText}>{errors.price}</Text> : null}
 
-                        <Text style={[s.label, { color: C.text[scheme], marginTop: 14 }]}>Image URL (optional)</Text>
-                        <TextInput style={inputStyle("image")} value={form.image}
-                            onChangeText={v => setForm(f => ({ ...f, image: v }))}
-                            placeholder="https://cdn.example.com/image.jpg" placeholderTextColor={C.secondary[scheme]}
-                            autoCapitalize="none" keyboardType="url"
-                            onFocus={() => setFocusedField("image")} onBlur={() => setFocusedField(null)} />
+
 
                         <Text style={[s.label, { color: C.text[scheme], marginTop: 14 }]}>Category *</Text>
                         <TouchableOpacity
@@ -389,6 +415,11 @@ const s = StyleSheet.create({
         fontSize: 18,
         fontWeight: "800",
     },
+    heroContainer: {
+        width: "100%",
+        height: 240,
+        position: 'relative',
+    },
     heroImage: {
         width: "100%",
         height: 240,
@@ -398,6 +429,18 @@ const s = StyleSheet.create({
         height: 240,
         alignItems: "center",
         justifyContent: "center",
+    },
+    editImgBadge: {
+        position: 'absolute',
+        bottom: 16,
+        right: 16,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 3,
+        borderColor: '#fff',
     },
     body: {
         padding: 18,

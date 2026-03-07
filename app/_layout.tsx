@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { getMeApi } from "@/src/api/authApi";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
+import { DashboardProvider } from "@/src/context/DashboardContext";
 import { ThemeProvider, useTheme } from "@/src/context/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from "@react-navigation/native";
@@ -101,7 +102,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <AppContent />
+        <DashboardProvider>
+          <AppContent />
+        </DashboardProvider>
       </ThemeProvider>
     </AuthProvider>
   );

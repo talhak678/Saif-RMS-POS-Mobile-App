@@ -115,44 +115,55 @@ export default function Profile() {
       )}
 
       {/* ── Restaurant Info Box ── */}
-      {user.restaurant && (
-        <View style={[s.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[s.sectionTitle, { color: colors.secondary }]}>RESTAURANT DETAILS</Text>
+      {user.restaurant && (() => {
+        const restaurant = user.restaurant;
+        return (
+          <View style={[s.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[s.sectionTitle, { color: colors.secondary }]}>RESTAURANT DETAILS</Text>
 
-          <View style={s.restMainInfo}>
-            <View>
-              <Text style={[s.restName, { color: colors.text }]}>{user.restaurant.name}</Text>
-              <Text style={[s.restSlug, { color: Colors.primary }]}>
-                {user.restaurant.slug}.platteros.com
+            <View style={s.restMainInfo}>
+              <View>
+                <Text style={[s.restName, { color: colors.text }]}>{restaurant.name}</Text>
+                <TouchableOpacity onPress={() => {
+                  const url = restaurant.customDomain
+                    ? `https://${restaurant.customDomain}`
+                    : `https://${restaurant.slug}.platteros.com`;
+                  require('react-native').Linking.openURL(url);
+                }}>
+                  <Text style={[s.restSlug, { color: Colors.primary }]}>
+                    {restaurant.customDomain || `${restaurant.slug}.platteros.com`}
+                    {" "}<Ionicons name="open-outline" size={12} color={Colors.primary} />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {restaurant.description && (
+              <Text style={[s.restDesc, { color: colors.secondary }]}>
+                {restaurant.description}
               </Text>
+            )}
+
+            <View style={s.socialRow}>
+              {restaurant.facebookUrl && (
+                <TouchableOpacity style={[s.socialCircle, { backgroundColor: '#1877F2' }]}>
+                  <Ionicons name="logo-facebook" size={18} color="#fff" />
+                </TouchableOpacity>
+              )}
+              {restaurant.instagramUrl && (
+                <TouchableOpacity style={[s.socialCircle, { backgroundColor: '#E4405F' }]}>
+                  <Ionicons name="logo-instagram" size={18} color="#fff" />
+                </TouchableOpacity>
+              )}
+              {restaurant.tiktokUrl && (
+                <TouchableOpacity style={[s.socialCircle, { backgroundColor: '#000' }]}>
+                  <Ionicons name="logo-tiktok" size={18} color="#fff" />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
-
-          {user.restaurant.description && (
-            <Text style={[s.restDesc, { color: colors.secondary }]}>
-              {user.restaurant.description}
-            </Text>
-          )}
-
-          <View style={s.socialRow}>
-            {user.restaurant.facebookUrl && (
-              <TouchableOpacity style={[s.socialCircle, { backgroundColor: '#1877F2' }]}>
-                <Ionicons name="logo-facebook" size={18} color="#fff" />
-              </TouchableOpacity>
-            )}
-            {user.restaurant.instagramUrl && (
-              <TouchableOpacity style={[s.socialCircle, { backgroundColor: '#E4405F' }]}>
-                <Ionicons name="logo-instagram" size={18} color="#fff" />
-              </TouchableOpacity>
-            )}
-            {user.restaurant.tiktokUrl && (
-              <TouchableOpacity style={[s.socialCircle, { backgroundColor: '#000' }]}>
-                <Ionicons name="logo-tiktok" size={18} color="#fff" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      )}
+        );
+      })()}
 
       {/* ── Appearance ── */}
       <View style={[s.section, { backgroundColor: colors.card, borderColor: colors.border }]}>

@@ -27,6 +27,7 @@ export interface UserRestaurant {
   tiktokUrl?: string;
   subscription?: string;
   subEndDate?: string;
+  customDomain?: string;
 }
 
 export interface User {

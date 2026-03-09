@@ -61,11 +61,18 @@ const modules = [
     ],
   },
   {
-    title: "Settings",
+    title: "Profile Settings",
     icon: "settings-outline" as const,
     color: "#64748b",
     bg: "#F8FAFC",
     route: "/settings",
+  },
+  {
+    title: "Payment Plans",
+    icon: "card-outline" as const,
+    color: "#0ea5e9",
+    bg: "#F0F9FF",
+    route: "/(app)/(settings)/payment-plans",
   },
 ];
 

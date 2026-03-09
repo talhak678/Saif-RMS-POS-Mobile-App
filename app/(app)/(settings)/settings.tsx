@@ -16,7 +16,7 @@ type SettingsTab = 'INFO' | 'REST' | 'LOGIN' | 'MAPS' | 'MEMBERSHIP' | 'PAYMENTS
 
 const TABS: { id: SettingsTab; label: string; icon: any }[] = [
     { id: 'INFO', label: 'Info', icon: 'person-outline' },
-    { id: 'REST', label: 'Rest. Info', icon: 'restaurant-outline' },
+    { id: 'REST', label: 'Restaurent Info', icon: 'restaurant-outline' },
     { id: 'LOGIN', label: 'Login Info', icon: 'lock-closed-outline' },
     { id: 'MAPS', label: 'Maps', icon: 'map-outline' },
     { id: 'MEMBERSHIP', label: 'Membership', icon: 'ribbon-outline' },
@@ -60,6 +60,14 @@ export default function ProfileScreen() {
                     <Ionicons name="arrow-back" size={20} color={C.text[scheme]} />
                 </TouchableOpacity>
                 <Text style={[s.headerTitle, { color: C.text[scheme] }]}>Profile & Settings</Text>
+            </View>
+
+            {/* ── Alert Tip ── */}
+            <View style={[s.alertBox, { backgroundColor: isDark ? '#1e293b' : '#eff6ff', borderColor: isDark ? '#334155' : '#dbeafe' }]}>
+                <Ionicons name="information-circle" size={20} color={C.primary[scheme]} />
+                <Text style={[s.alertText, { color: C.text[scheme] }]}>
+                    For managing the POS, CMS & Website, log in to the web at <Text style={{ fontWeight: 'bold', color: C.primary[scheme] }}>app.platteros.com</Text>
+                </Text>
             </View>
 
             {/* ── Hero Profile ───────────────────────────────────────────────────── */}
@@ -250,4 +258,16 @@ const s = StyleSheet.create({
     activeTabLabel: { fontWeight: '900' },
 
     content: { flex: 1 },
+
+    alertBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        margin: 16,
+        marginBottom: 0,
+        borderRadius: 12,
+        borderWidth: 1,
+        gap: 12,
+    },
+    alertText: { fontSize: 13, flex: 1, fontWeight: '500', lineHeight: 18 },
 });

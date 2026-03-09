@@ -28,9 +28,9 @@ import {
 
 function fmt(n: number | null | undefined): string {
   const safe = Number(n ?? 0);
-  if (safe >= 1_000_000) return `Rs.${(safe / 1_000_000).toFixed(2)}M`;
-  if (safe >= 1_000) return `Rs.${(safe / 1_000).toFixed(2)}K`;
-  return `Rs.${safe.toFixed(2)}`;
+  if (safe >= 1_000_000) return `USD ${(safe / 1_000_000).toFixed(2)}M`;
+  if (safe >= 1_000) return `USD ${(safe / 1_000).toFixed(2)}K`;
+  return `USD ${safe.toFixed(2)}`;
 }
 
 function fmtNum(n: number | null | undefined): string {

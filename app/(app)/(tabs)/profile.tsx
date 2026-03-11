@@ -2,7 +2,9 @@ import { Colors } from "@/constants/theme";
 import apiClient from "@/src/api/apiClient";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
+import { registerForPushNotificationsAsync } from "@/src/utils/notifications";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -26,10 +28,41 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     if (user) setName(user.name);
+    loadNotificationStatus();
   }, [user]);
+
+  const loadNotificationStatus = async () => {
+    const status = await AsyncStorage.getItem('push_notifications_enabled');
+    setNotificationsEnabled(status === 'true');
+  };
+
+  const togglePushNotifications = async (value: boolean) => {
+    if (!user) return;
+    if (value) {
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        setNotificationsEnabled(true);
+        await AsyncStorage.setItem('push_notifications_enabled', 'true');
+        // Official API call to save token
+        try {
+          await apiClient.post('/users/set-push-token', { pushToken: token });
+          console.log("Token saved to backend successfully");
+        } catch (err) {
+          console.warn("Failed to save push token to backend", err);
+        }
+      } else {
+        setNotificationsEnabled(false);
+      }
+    } else {
+      setNotificationsEnabled(false);
+      await AsyncStorage.setItem('push_notifications_enabled', 'false');
+      // Optional: Logic to unregister token if backend supports it
+    }
+  };
 
   if (!user) {
     return (
@@ -124,12 +157,17 @@ export default function Profile() {
             <View style={s.restMainInfo}>
               <View>
                 <Text style={[s.restName, { color: colors.text }]}>{restaurant.name}</Text>
-                <TouchableOpacity onPress={() => {
-                  const url = restaurant.customDomain
-                    ? `https://${restaurant.customDomain}`
-                    : `https://${restaurant.slug}.platteros.com`;
-                  require('react-native').Linking.openURL(url);
-                }}>
+                <TouchableOpacity
+                  style={{ marginTop: 4 }}
+                  onPress={() => {
+                    const url = restaurant.customDomain
+                      ? `https://${restaurant.customDomain}`
+                      : `https://${restaurant.slug}.platteros.com`;
+                    require('react-native').Linking.openURL(url);
+                  }}>
+                  <Text style={{ fontSize: 11, color: colors.secondary, marginBottom: 2, fontWeight: '600' }}>
+                    Visit your restaurant website here
+                  </Text>
                   <Text style={[s.restSlug, { color: Colors.primary }]}>
                     {restaurant.customDomain || `${restaurant.slug}.platteros.com`}
                     {" "}<Ionicons name="open-outline" size={12} color={Colors.primary} />
@@ -189,6 +227,32 @@ export default function Profile() {
             onValueChange={toggleTheme}
             trackColor={{ false: "#E2E8F0", true: Colors.primary + "60" }}
             thumbColor={isDark ? Colors.primary : "#fff"}
+            ios_backgroundColor="#E2E8F0"
+          />
+        </View>
+
+        {/* ── Push Notifications ── */}
+        <View style={[s.settingRow, { marginTop: 16, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 16 }]}>
+          <View style={s.settingLeft}>
+            <View style={[s.settingIconWrap, { backgroundColor: notificationsEnabled ? '#dcfce7' : '#f3f4f6' }]}>
+              <Ionicons
+                name="notifications-outline"
+                size={18}
+                color={notificationsEnabled ? '#166534' : '#64748b'}
+              />
+            </View>
+            <View>
+              <Text style={[s.settingLabel, { color: colors.text }]}>Push Notifications</Text>
+              <Text style={[s.settingSubLabel, { color: colors.secondary }]}>
+                {notificationsEnabled ? "Enabled" : "Disabled"}
+              </Text>
+            </View>
+          </View>
+          <Switch
+            value={notificationsEnabled}
+            onValueChange={togglePushNotifications}
+            trackColor={{ false: "#E2E8F0", true: Colors.primary + "60" }}
+            thumbColor={notificationsEnabled ? Colors.primary : "#fff"}
             ios_backgroundColor="#E2E8F0"
           />
         </View>

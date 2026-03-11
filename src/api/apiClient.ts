@@ -3,7 +3,9 @@ import axios from "axios";
 import { router } from "expo-router";
 
 const apiClient = axios.create({
-  baseURL: "https://saif-rms-pos-backend.vercel.app/api",
+  baseURL: "https://saif-rms-pos-backend-tau.vercel.app/api",
+  // baseURL: "http://172.19.0.1:3000/api",
+
   headers: { "Content-Type": "application/json" },
 });
 

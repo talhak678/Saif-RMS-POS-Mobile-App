@@ -97,7 +97,7 @@ export default function ProfileScreen() {
                         <View style={s.restHeader}>
                             <View style={{ flex: 1 }}>
                                 <Text style={[s.restName, { color: C.text[scheme] }]}>{user.restaurant.name}</Text>
-                                <Text style={[s.restSlug, { color: C.secondary[scheme] }]}>{user.restaurant.slug}.platteros.com</Text>
+                                <Text style={[s.restSlug, { color: C.secondary[scheme] }]}>{user.restaurant.customDomain ? user.restaurant.customDomain : user.restaurant.slug + ".platteros.com"}</Text>
                             </View>
                             <View style={s.socials}>
                                 {user.restaurant.facebookUrl && (

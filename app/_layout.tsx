@@ -76,7 +76,6 @@ function AppContent() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(app)" />
-        <Stack.Screen name="edit-profile" />
       </Stack>
       <StatusBar style={isDark ? "light" : "dark"} />
 

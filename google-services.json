@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "958551820582",
+    "project_id": "platteros-6f63f",
+    "storage_bucket": "platteros-6f63f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958551820582:android:e7c7fad4a35a94b21019e7",
+        "android_client_info": {
+          "package_name": "com.hassan_hayat.platterosapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD40BpzsdJfXlWVD-CVibbTOeE8GFrCLVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

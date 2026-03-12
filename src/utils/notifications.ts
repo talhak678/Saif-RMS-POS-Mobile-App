@@ -27,12 +27,25 @@ export async function registerForPushNotificationsAsync() {
       return;
     }
     
-    // Learn more about projectId here: https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    // Project ID is usually in Constants.expoConfig.extra.eas.projectId
-    const projectId = Constants?.expoConfig?.extra?.eas?.projectId || Constants?.easConfig?.projectId;
-    
-    token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-    console.log("Expo Push Token:", token);
+    // For standalone/dev builds, we MUST have a projectId
+    const projectId = 
+      Constants?.expoConfig?.extra?.eas?.projectId ?? 
+      Constants?.easConfig?.projectId;
+
+    if (!projectId) {
+      console.error("Project ID not found in Constants. Check your app.json and eas.json.");
+      alert("Notification error: Project ID missing. Check console.");
+      return;
+    }
+
+    try {
+      const expoPushToken = await Notifications.getExpoPushTokenAsync({ projectId });
+      token = expoPushToken.data;
+      console.log("Expo Push Token Successfully Generated:", token);
+    } catch (e) {
+      console.error("Error getting Expo Push Token:", e);
+      alert(`Error getting push token: ${e}`);
+    }
   } else {
     alert('Must use physical device for Push Notifications');
   }
